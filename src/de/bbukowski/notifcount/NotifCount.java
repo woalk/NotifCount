@@ -44,11 +44,9 @@ public class NotifCount implements IXposedHookLoadPackage,
 
         mModRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
         mRes = resparam.res;
-        mRes.setReplacement("com.android.systemui", "drawable",
-                "notification_number_text_color",
+        mRes.setReplacement("com.android.systemui", "drawable", "notification_number_text_color",
                 mModRes.fwd(R.drawable.notification_number_text_color));
-        mRes.setReplacement("com.android.systemui", "drawable",
-                "ic_notification_overlay",
+        mRes.setReplacement("com.android.systemui", "drawable", "ic_notification_overlay",
                 mModRes.fwd(R.drawable.ic_notification_overlay));
     }
 
@@ -85,10 +83,9 @@ public class NotifCount implements IXposedHookLoadPackage,
                             throws Throwable {
                         Object icon = param.args[0];
                         int number = XposedHelpers.getIntField(icon, "number");
-                        if (number > 1) {
-                            mRes.setReplacement("com.android.systemui", "bool",
-                                    "config_statusBarShowNumber", Boolean.TRUE);
-                        }
+
+                        mRes.setReplacement("com.android.systemui", "bool",
+                                "config_statusBarShowNumber", number > 1);
                     }
                 });
     }
