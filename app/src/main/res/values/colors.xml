@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <drawable name="notification_number_text_color">#ff000000</drawable>
+
+</resources>

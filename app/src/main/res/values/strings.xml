@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">Notification Count</string>
+  <string name="title_activity_main">@string/app_name</string>
+  <string name="test_notification">Test notification</string>
+  <string name="test_notification_text">This is a test notification!</string>
+  <string name="show_in_launcher">Show in launcher</string>
+  <string name="show_in_launcher_sum">Show in launcher summary</string>
+  <string name="hello_world">Hello world!</string>
+  <string name="action_settings">Settings</string>
+
+</resources>
