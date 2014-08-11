@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+  <CheckBox
+    android:id="@+id/checkbox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:clickable="true"
+    android:focusable="false"
+    android:padding="8dip"/>
+
+  <ImageView
+    android:id="@+id/icon"
+    android:layout_width="48dip"
+    android:layout_height="48dip"
+    android:layout_alignParentLeft="true"
+    android:layout_centerVertical="true"
+    android:paddingEnd="5dp"
+    android:contentDescription="@string/app_icon_cd"
+    android:src="@drawable/ic_launcher"/>
+
+  <TextView
+    android:id="@android:id/title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_toLeftOf="@+id/checkbox"
+    android:layout_toRightOf="@+id/icon"
+    android:ellipsize="end"
+    android:singleLine="true"
+    android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+  <TextView
+    android:id="@android:id/summary"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@android:id/title"
+    android:layout_alignParentBottom="true"
+    android:layout_toLeftOf="@+id/checkbox"
+    android:ellipsize="end"
+    android:singleLine="true"
+    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+</RelativeLayout>

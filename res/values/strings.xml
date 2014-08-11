@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Notification Count</string>
+    <string name="settings_increment_on_update">Workaround</string>
+    <string name="settings_debug">Debug</string>
+    <string name="test_notification_text">This is a test notification!</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="app_icon_cd">Application icon</string>
+    <string name="pref_apps_increase_onupdate_title">Whitelist apps</string>
+    <string name="pref_apps_increase_onupdate_summary">Workaround for apps which won\'t set a number to notification.\n\nEvery time a selected app updates a notification, the number will automatically be incremented.\n\nNote:\nThis is ONLY necessary if an app does not set the notification number itself!</string>
+    <string name="pref_test_notif_w_number_title">With number</string>
+    <string name="pref_test_notif_w_number_summary">Creates a test notification with a random number.</string>
+    <string name="pref_test_notif_wo_number_title">Without number</string>
+    <string name="pref_test_notif_wo_number_summary">Creates a test notification without a number.\n\nNote:\nOnly shows a number overlay if this app is whitelisted above.</string>
+
+</resources>

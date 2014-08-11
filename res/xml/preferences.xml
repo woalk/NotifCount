@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/settings_increment_on_update" >
+        <Preference
+            android:key="apps_list"
+            android:summary="@string/pref_apps_increase_onupdate_summary"
+            android:title="@string/pref_apps_increase_onupdate_title" >
+            <intent android:action="de.bbukowski.notifcount.WHITELIST" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_debug" >
+        <Preference
+            android:key="test_notif_w_number"
+            android:summary="@string/pref_test_notif_w_number_summary"
+            android:title="@string/pref_test_notif_w_number_title" />
+        <Preference
+            android:key="test_notif_wo_number"
+            android:summary="@string/pref_test_notif_wo_number_summary"
+            android:title="@string/pref_test_notif_wo_number_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
