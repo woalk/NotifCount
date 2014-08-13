@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.IBinder;
 import android.service.notification.StatusBarNotification;
+import android.support.v4.app.NotificationCompat;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -48,9 +49,9 @@ public class XposedMod implements IXposedHookLoadPackage,
       mSettingsHelper = new SettingsHelper();
     }
 
-    if (Build.VERSION.SDK_INT >= 16) {
-      hookNotificationInboxStyle();
-    }
+    // if (Build.VERSION.SDK_INT >= 16) {
+    // hookNotificationInboxStyle();
+    // }
 
     if (Build.VERSION.SDK_INT >= 18) {
       hookAutoIncrementMethodsApi18();
