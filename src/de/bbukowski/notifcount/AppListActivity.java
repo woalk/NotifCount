@@ -55,6 +55,7 @@ public class AppListActivity extends ListActivity {
         }
       }
     });
+    this.getListView().setFastScrollEnabled(true);
   }
 
   @Override
