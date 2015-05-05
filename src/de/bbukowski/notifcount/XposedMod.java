@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.IBinder;
+import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
@@ -33,7 +34,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String CLASS_STATUSBARICONVIEW = "com.android.systemui.statusbar.StatusBarIconView";
   private static final String CLASS_STATUSBARICON = "com.android.internal.statusbar.StatusBarIcon";
   private static final String CLASS_STATUSBARMANAGERSERVICE = "com.android.server.StatusBarManagerService";
-  private static final String CLASS_STATUSBARMANAGERSERVICE_API21 = "com.android.server.statusbar.StatusBarManagerService";
+  private static final String CLASS_BASESTATUSBAR = "com.android.systemui.statusbar.BaseStatusBar";
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
 
   private static SettingsHelper mSettingsHelper;
@@ -53,12 +54,11 @@ public class XposedMod implements IXposedHookLoadPackage,
     // hookNotificationInboxStyle();
     // }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      hookAutoIncrementMethodsApi21();
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      hookAutoIncrementMethodsApi18();
-    } else {
-      hookAutoIncrementMethodsApi15();
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+        hookAutoIncrementMethodsApi18();
+      else
+        hookAutoIncrementMethodsApi15();
     }
   }
 
@@ -119,6 +119,10 @@ public class XposedMod implements IXposedHookLoadPackage,
                 number > 1);
           }
         });
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      hookAutoIncrementMethodsApi21(lpparam.classLoader);
+    }
   }
 
   @TargetApi(16)
@@ -139,33 +143,41 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(21)
-  private void hookAutoIncrementMethodsApi21() {
-    Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE_API21, null);
-    if (true)
-      return; // TODO: Remove this line when solution found, code below is
-              // not-functional code because method does not exist on API21
-    XposedHelpers.findAndHookMethod(clazz, "updateNotification", IBinder.class,
-        StatusBarNotification.class, new XC_MethodHook() {
+  private void hookAutoIncrementMethodsApi21(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_BASESTATUSBAR, loader);
+    XposedHelpers.findAndHookMethod(clazz, "updateNotification", StatusBarNotification.class,
+        RankingMap.class, new XC_MethodHook() {
 
-          @SuppressWarnings("unchecked")
           @Override
           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            IBinder key = (IBinder) param.args[0];
-            StatusBarNotification sbn = (StatusBarNotification) param.args[1];
-
+            StatusBarNotification sbn = (StatusBarNotification) param.args[0];
             if (sbn.getNotification().number == 0) {
               mSettingsHelper.reload();
               if (mSettingsHelper.isListed(sbn.getPackageName())) {
-                HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
-                    .getObjectField(param.thisObject, "mNotifications");
+                Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
+                    "mNotificationData");
+                Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
+                    "mHeadsUpNotificationView");
 
-                if (mNotifications.containsKey(key)) {
-                  StatusBarNotification oldSbn = mNotifications.get(key);
-                  if (oldSbn.getNotification().number == 0) {
-                    sbn.getNotification().number = 2;
-                  } else {
-                    sbn.getNotification().number = oldSbn.getNotification().number + 1;
-                  }
+                final String key = sbn.getKey();
+                boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
+                    "isHeadsUp", key);
+                Object oldEntry;
+                if (wasHeadsUp) {
+                  oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
+                } else {
+                  oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
+                }
+                if (oldEntry == null) {
+                  return;
+                }
+
+                final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
+                    .getObjectField(oldEntry, "notification");
+                if (oldSbn.getNotification().number == 0) {
+                  sbn.getNotification().number = 2;
+                } else {
+                  sbn.getNotification().number = oldSbn.getNotification().number + 1;
                 }
               }
             }
