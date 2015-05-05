@@ -5,7 +5,7 @@
 The original author of this Mod is *bbukowski* (https://github.com/bbukowski).
 This is a fork of https://github.com/bbukowski/NotifCount/ to keep developing, as the original author seems to have discontinued development (last commit mid 2014).
 I will create a pull request for the changes for a possible merge into the original repo, if the original developer would like to continue.
-*Info:* The last recent master state of the original repo is not functional, as it crashes in `InitZygote` due to a not found class.
+*Info:* The last recent `master` state of the original repo is not functional on Lollipop devices, as it crashes in `InitZygote` due to a not found class.
 
 ### Support for this module
 Bug reports, feature requests, questions, etc.:
@@ -18,9 +18,13 @@ Also feel free to open an issue on GitHub if you want.
 This module currently has the following abilities:
 - Enable the Android-built-in functionality to add a number to notifications which provide Android a number, e.g. Messaging apps (like Telegram)
 
-More features related to this function may be added in the future.
+- Add such a number to selected apps that do not provide it by theirselves by increasing the number every time the notification gets updated.
+Apps that should get this 'workaround' (named `hookAutoIncrement...` in code) have to be selected excplicitly.
+This does not work on Lollipop at the moment.
 
-### Source informarion
+More features related to these functions may be added in the future.
+
+### Source information
 The original developer did not provide any licensing information.
 I assume that he is ok with forking his work.
 *bbukowski, please contact me if you don't want this to be online anymore.*
