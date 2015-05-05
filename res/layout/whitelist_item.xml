@@ -10,7 +10,7 @@
     android:layout_height="wrap_content"
     android:layout_alignParentRight="true"
     android:layout_centerVertical="true"
-    android:clickable="true"
+    android:clickable="false"
     android:focusable="false"
     android:padding="8dip"/>
 
@@ -20,7 +20,7 @@
     android:layout_height="48dip"
     android:layout_alignParentLeft="true"
     android:layout_centerVertical="true"
-    android:paddingEnd="5dp"
+    android:paddingRight="5dp"
     android:contentDescription="@string/app_icon_cd"
     android:src="@drawable/ic_launcher"/>
 
