@@ -7,6 +7,8 @@ This is a fork of https://github.com/bbukowski/NotifCount/ to keep developing, a
 I will create a pull request for the changes for a possible merge into the original repo, if the original developer would like to continue.
 *Info:* The last recent `master` state of the original repo is not functional on Lollipop devices, as it crashes in `InitZygote` due to a not found class.
 
+This fork had the first goal to fix this issue, to make this mod usable for Lollipop users.
+
 ### Support for this module
 Bug reports, feature requests, questions, etc.:
 **XDA Developers** thread:
@@ -20,7 +22,6 @@ This module currently has the following abilities:
 
 - Add such a number to selected apps that do not provide it by theirselves by increasing the number every time the notification gets updated.
 Apps that should get this 'workaround' (named `hookAutoIncrement...` in code) have to be selected excplicitly.
-This does not work on Lollipop at the moment.
 
 More features related to these functions may be added in the future.
 
