@@ -9,6 +9,14 @@
             <intent android:action="de.bbukowski.notifcount.WHITELIST" />
         </Preference>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_appearance" >
+        <ListPreference
+            android:key="number_size"
+            android:title="@string/pref_appear_number_size"
+            android:dialogTitle="@string/pref_appear_number_size"
+            android:entries="@array/pref_appear_number_size_list"
+            android:entryValues="@array/pref_appear_number_size_value_list" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_debug" >
         <Preference
             android:key="test_notif_w_number"

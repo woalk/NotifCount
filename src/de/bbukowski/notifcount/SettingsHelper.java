@@ -17,6 +17,7 @@ public class SettingsHelper {
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
+  private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
 
   private XSharedPreferences mXSharedPreferences;
   private SharedPreferences mSharedPreferences;
@@ -65,6 +66,15 @@ public class SettingsHelper {
     if (mListItems == null)
       mListItems = getListItems();
     return mListItems.contains(s);
+  }
+
+  public int getNumberSize() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number = Integer.valueOf(mSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
+    else if (mXSharedPreferences != null)
+      number = Integer.valueOf(mXSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
+    return number;
   }
 
 }

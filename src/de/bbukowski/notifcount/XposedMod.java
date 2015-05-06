@@ -93,13 +93,32 @@ public class XposedMod implements IXposedHookLoadPackage,
               throws Throwable {
             Context context = (Context) param.args[0];
             final Resources res = context.getResources();
+            int numberSize = mSettingsHelper.getNumberSize();
             final float densityMultiplier = res.getDisplayMetrics().density;
-            final float scaledPx = 8 * densityMultiplier;
+            final float scaledPx = ((numberSize == 2) ? 7 : 9) * densityMultiplier;
 
             Paint mNumberPain = (Paint) XposedHelpers
                 .getObjectField(param.thisObject, "mNumberPain");
             mNumberPain.setTypeface(Typeface.DEFAULT_BOLD);
             mNumberPain.setTextSize(scaledPx);
+
+            int overlayId;
+            switch (numberSize) {
+              case 1:
+                overlayId = R.drawable.ic_notification_overlay_transparent;
+                break;
+              case 2:
+                overlayId = R.drawable.ic_notification_overlay_small;
+                break;
+              case 0:
+                overlayId = R.drawable.ic_notification_overlay;
+                break;
+              default:
+                overlayId = -1;
+            }
+            if (overlayId > -1)
+              mRes.setReplacement(PKG_SYSTEMUI, "drawable", "ic_notification_overlay",
+                  mModRes.fwd(overlayId));
           }
         });
 
