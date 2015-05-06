@@ -18,9 +18,8 @@ import android.support.v4.app.NotificationCompat;
 import java.util.Random;
 
 /**
- * Created by bbukowski on 07.08.14.
+ * Created by bbukowski on 07.08.14. Maintained by woalk since 2015/05/05.
  */
-
 public class SettingsFragment extends PreferenceFragment implements
     OnSharedPreferenceChangeListener {
 

@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by bbukowski on 07.08.14.
+ * Created by bbukowski on 07.08.14. Maintained by woalk since 2015/05/05.
  */
 public class AppListActivity extends ListActivity {
 

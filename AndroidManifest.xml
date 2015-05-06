@@ -17,10 +17,10 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Shows a notification count badge on statusbar icon" />
+            android:value="Shows a notification count badge on StatusBar icons providing a quantity." />
         <meta-data
             android:name="xposedminversion"
-            android:value="30" />
+            android:value="54" />
 
         <activity
             android:name=".SettingsActivity"
