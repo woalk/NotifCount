@@ -23,6 +23,8 @@ This module currently has the following abilities:
 - Add such a number to selected apps that do not provide it by theirselves by increasing the number every time the notification gets updated.
 Apps that should get this 'workaround' (named `hookAutoIncrement...` in code) have to be selected excplicitly.
 
+- Customize the appearance of the number - Change between opaque background, transparent background, or smaller number.
+
 More features related to these functions may be added in the future.
 
 ### Source information
