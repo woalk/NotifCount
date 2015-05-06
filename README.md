@@ -11,8 +11,9 @@ This fork had the first goal to fix this issue, to make this mod usable for Loll
 
 ### Support for this module
 Bug reports, feature requests, questions, etc.:
+
 **XDA Developers** thread:
-(coming soon)
+http://forum.xda-developers.com/xposed/modules/mod-notification-count-t3101832
 
 Also feel free to open an issue on GitHub if you want.
 
