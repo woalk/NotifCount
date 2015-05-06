@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -55,6 +57,18 @@ public class SettingsFragment extends PreferenceFragment implements
 
     ListPreference numberSizePref = (ListPreference) findPreference("number_size");
     numberSizePref.setSummary(numberSizePref.getEntry());
+
+    Preference versionNumber = findPreference("version_number");
+    PackageInfo pInfo;
+    String version;
+    try {
+      pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+      version = pInfo.versionName;
+    } catch (NameNotFoundException e) {
+      version = "Error loading version information.";
+      e.printStackTrace();
+    }
+    versionNumber.setSummary(String.format(versionNumber.getSummary().toString(), version));
   }
 
   private void showTestNotification(boolean setNumber) {
