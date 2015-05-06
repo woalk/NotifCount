@@ -31,10 +31,12 @@ import java.util.List;
 public class XposedMod implements IXposedHookLoadPackage,
     IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
-  private static final String CLASS_STATUSBARICONVIEW = "com.android.systemui.statusbar.StatusBarIconView";
+  private static final String PKG_SYSTEMUI = "com.android.systemui";
+  private static final String CLASS_STATUSBARICONVIEW = PKG_SYSTEMUI
+      + ".statusbar.StatusBarIconView";
   private static final String CLASS_STATUSBARICON = "com.android.internal.statusbar.StatusBarIcon";
   private static final String CLASS_STATUSBARMANAGERSERVICE = "com.android.server.StatusBarManagerService";
-  private static final String CLASS_BASESTATUSBAR = "com.android.systemui.statusbar.BaseStatusBar";
+  private static final String CLASS_BASESTATUSBAR = PKG_SYSTEMUI + ".statusbar.BaseStatusBar";
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
 
   private static SettingsHelper mSettingsHelper;
@@ -66,22 +68,20 @@ public class XposedMod implements IXposedHookLoadPackage,
   public void handleInitPackageResources(
       XC_InitPackageResources.InitPackageResourcesParam resparam)
       throws Throwable {
-    if (!resparam.packageName.equals("com.android.systemui"))
+    if (!resparam.packageName.equals(PKG_SYSTEMUI))
       return;
 
     mModRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
     mRes = resparam.res;
-    mRes.setReplacement("com.android.systemui", "drawable", "notification_number_text_color",
+    mRes.setReplacement(PKG_SYSTEMUI, "drawable", "notification_number_text_color",
         mModRes.fwd(R.drawable.notification_number_text_color));
-    mRes.setReplacement("com.android.systemui", "drawable", "ic_notification_overlay",
-        mModRes.fwd(R.drawable.ic_notification_overlay));
   }
 
   @Override
   public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam)
       throws Throwable {
 
-    if (!"com.android.systemui".equals(lpparam.packageName))
+    if (!PKG_SYSTEMUI.equals(lpparam.packageName))
       return;
 
     findAndHookConstructor(CLASS_STATUSBARICONVIEW, lpparam.classLoader,
@@ -114,7 +114,7 @@ public class XposedMod implements IXposedHookLoadPackage,
 
             mSettingsHelper.reload();
 
-            mRes.setReplacement("com.android.systemui", "bool",
+            mRes.setReplacement(PKG_SYSTEMUI, "bool",
                 "config_statusBarShowNumber",
                 number > 1);
           }
