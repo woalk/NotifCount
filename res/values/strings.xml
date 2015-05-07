@@ -16,6 +16,8 @@
     <string name="pref_appear_number_size_1">Transparent</string>
     <string name="pref_appear_number_size_2">Small</string>
     <string name="pref_appear_number_size_default">Device default\n(e.g. on AOSP: red)</string>
+    <string name="pref_appear_show_app_icon_title">Show launcher icon</string>
+    <string name="pref_appear_show_app_icon_summary">You can still launch the module settings via Xposed Installer.</string>
     <string name="pref_test_notif_w_number_title">With number</string>
     <string name="pref_test_notif_w_number_summary">Creates a test notification with a random number.</string>
     <string name="pref_test_notif_wo_number_title">Without number</string>

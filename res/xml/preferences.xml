@@ -16,6 +16,11 @@
             android:dialogTitle="@string/pref_appear_number_size"
             android:entries="@array/pref_appear_number_size_list"
             android:entryValues="@array/pref_appear_number_size_value_list" />
+        <CheckBoxPreference
+            android:key="show_app_icon"
+            android:title="@string/pref_appear_show_app_icon_title"
+            android:summary="@string/pref_appear_show_app_icon_summary"
+            android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_debug" >
         <Preference

@@ -4,11 +4,13 @@ package com.woalk.apps.xposed.notifcount;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -57,6 +59,20 @@ public class SettingsFragment extends PreferenceFragment implements
 
     ListPreference numberSizePref = (ListPreference) findPreference("number_size");
     numberSizePref.setSummary(numberSizePref.getEntry());
+
+    Preference showAppIcon = findPreference("show_app_icon");
+    showAppIcon.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+      @Override
+      public boolean onPreferenceChange(Preference preference, Object newValue) {
+        PackageManager packageManager = getActivity().getPackageManager();
+        int state = (Boolean) newValue ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        ComponentName aliasName = new ComponentName(getActivity(), SettingsHelper.PACKAGE_NAME
+            + ".Activity-Alias");
+        packageManager.setComponentEnabledSetting(aliasName, state, PackageManager.DONT_KILL_APP);
+        return true;
+      }
+    });
 
     Preference versionNumber = findPreference("version_number");
     PackageInfo pInfo;
