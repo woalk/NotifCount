@@ -13,7 +13,7 @@ import java.util.HashSet;
  */
 public class SettingsHelper {
 
-  private static final String PACKAGE_NAME = "de.bbukowski.notifcount";
+  public static final String PACKAGE_NAME = "de.bbukowski.notifcount";
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
