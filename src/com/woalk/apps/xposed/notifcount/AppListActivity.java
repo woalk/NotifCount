@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -40,21 +39,7 @@ public class AppListActivity extends ListActivity {
     new LoadAppsInfoTask().execute();
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setTitle(R.string.pref_apps_increase_onupdate_title);
-
-    this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        CheckBox check = (CheckBox) view.findViewById(R.id.checkbox);
-        check.setChecked(!check.isChecked());
-        AppInfo item = (AppInfo) parent.getAdapter().getItem(position);
-        item.enabled = check.isChecked();
-        if (item.enabled) {
-          mSettingsHelper.addListItem(item.summary);
-        } else {
-          mSettingsHelper.removeListItem(item.summary);
-        }
-      }
-    });
+    
     this.getListView().setFastScrollEnabled(true);
   }
 
@@ -184,6 +169,17 @@ public class AppListActivity extends ListActivity {
       holder.icon.setImageDrawable(item.icon);
 
       holder.checkbox.setChecked(item.enabled);
+      holder.checkbox.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          item.enabled = holder.checkbox.isChecked();
+          if (holder.checkbox.isChecked()) {
+            mSettingsHelper.addListItem(item.summary);
+          } else {
+            mSettingsHelper.removeListItem(item.summary);
+          }
+        }
+      });
 
       return view;
     }
