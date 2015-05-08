@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.woalk.apps.xposed.notifcount"
-    android:versionCode="1"
-    android:versionName="1.0-re" >
+    android:versionCode="2"
+    android:versionName="1.1-re" >
 
     <uses-sdk
         android:minSdkVersion="15"
