@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -169,11 +170,11 @@ public class AppListActivity extends ListActivity {
       holder.icon.setImageDrawable(item.icon);
 
       holder.checkbox.setChecked(item.enabled);
-      holder.checkbox.setOnClickListener(new View.OnClickListener() {
+      holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
-        public void onClick(View v) {
-          item.enabled = holder.checkbox.isChecked();
-          if (holder.checkbox.isChecked()) {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+          item.enabled = isChecked;
+          if (isChecked) {
             mSettingsHelper.addListItem(item.summary);
           } else {
             mSettingsHelper.removeListItem(item.summary);
