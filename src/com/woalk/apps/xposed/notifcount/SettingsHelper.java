@@ -76,16 +76,16 @@ public class SettingsHelper {
   public HashSet<String> getListItemsExtract() {
     HashSet<String> set = new HashSet<String>();
     if (mSharedPreferences != null)
-      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, set));
     else if (mXSharedPreferences != null)
-      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, set));
     return set;
   }
 
   public void addListItemExtract(String listItem) {
-    mListItems.add(listItem);
+    mListItemsExtract.add(listItem);
     SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
-    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, mListItems);
+    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
     prefEditor.apply();
   }
 
