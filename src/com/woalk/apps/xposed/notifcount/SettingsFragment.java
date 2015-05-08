@@ -57,6 +57,16 @@ public class SettingsFragment extends PreferenceFragment implements
       }
     });
 
+    testNotif = findPreference("test_notif_wt_number");
+    testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        showTestTextNumberedNotification();
+        return true;
+      }
+    });
+
     ListPreference numberSizePref = (ListPreference) findPreference("number_size");
     numberSizePref.setSummary(numberSizePref.getEntry());
 
@@ -109,6 +119,36 @@ public class SettingsFragment extends PreferenceFragment implements
       }
       builder.setNumber(number);
     }
+
+    Notification n = builder.build();
+
+    NotificationManager notificationManager = (NotificationManager)
+        getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.notify(0, n);
+  }
+
+  private void showTestTextNumberedNotification() {
+    Intent resultIntent = new Intent(getActivity(), SettingsActivity.class);
+
+    PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), 0,
+        resultIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT);
+
+    String content = getResources().getString(R.string.test_notification_text);
+    int number = mRandom.nextInt(30);
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
+        .setSmallIcon(R.drawable.ic_stat_notify)
+        .setContentTitle(getResources()
+            .getText(R.string.app_name))
+        .setContentText(content)
+        .setContentIntent(resultPendingIntent)
+        .setAutoCancel(true)
+        .setStyle(new NotificationCompat.BigTextStyle()
+            .bigText(content)
+                .setSummaryText(
+                    String.format(getResources().getString(R.string.test_notification_only_text),
+                        number)));
 
     Notification n = builder.build();
 
