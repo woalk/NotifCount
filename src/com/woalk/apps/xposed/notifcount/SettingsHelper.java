@@ -17,11 +17,13 @@ public class SettingsHelper {
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
+  private static final String NOTIFICATION_EXTRACT_FILTER_LIST = "apps_list_extract";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
 
   private XSharedPreferences mXSharedPreferences;
   private SharedPreferences mSharedPreferences;
   private HashSet<String> mListItems;
+  private HashSet<String> mListItemsExtract;
 
   // Called from module's classes.
   public SettingsHelper() {
@@ -37,6 +39,7 @@ public class SettingsHelper {
   public void reload() {
     mXSharedPreferences.reload();
     mListItems = getListItems();
+    mListItemsExtract = getListItemsExtract();
   }
 
   public HashSet<String> getListItems() {
@@ -66,6 +69,35 @@ public class SettingsHelper {
     if (mListItems == null)
       mListItems = getListItems();
     return mListItems.contains(s);
+  }
+
+  public HashSet<String> getListItemsExtract() {
+    HashSet<String> set = new HashSet<String>();
+    if (mSharedPreferences != null)
+      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+    else if (mXSharedPreferences != null)
+      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+    return set;
+  }
+
+  public void addListItemExtract(String listItem) {
+    mListItems.add(listItem);
+    SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
+    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, mListItems);
+    prefEditor.apply();
+  }
+
+  public void removeListItemExtract(String listItem) {
+    SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
+    mListItemsExtract.remove(listItem);
+    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
+    prefEditor.apply();
+  }
+
+  public boolean isListedExtract(String s) {
+    if (mListItemsExtract == null)
+      mListItemsExtract = getListItemsExtract();
+    return mListItemsExtract.contains(s);
   }
 
   public int getNumberSize() {
