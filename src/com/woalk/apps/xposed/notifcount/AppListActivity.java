@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -214,6 +215,9 @@ public class AppListActivity extends ListActivity {
       };
       holder.radio0.setOnClickListener(radioClick);
       holder.radio1.setOnClickListener(radioClick);
+
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+        holder.radio0.setVisibility(View.GONE);
 
       holder.radio0.setChecked(item.extract);
       holder.radio1.setChecked(!item.extract);
