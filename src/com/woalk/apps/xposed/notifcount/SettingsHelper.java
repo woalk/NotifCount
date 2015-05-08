@@ -62,6 +62,8 @@ public class SettingsHelper {
     SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
     mListItems.remove(listItem);
     prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, mListItems);
+    mListItemsExtract.remove(listItem);
+    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
     prefEditor.apply();
   }
 

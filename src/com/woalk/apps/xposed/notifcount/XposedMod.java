@@ -21,6 +21,7 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -172,7 +173,9 @@ public class XposedMod implements IXposedHookLoadPackage,
             StatusBarNotification sbn = (StatusBarNotification) param.args[0];
             if (sbn.getNotification().number == 0) {
               mSettingsHelper.reload();
-              if (mSettingsHelper.isListed(sbn.getPackageName())) {
+              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
+              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
+              if (isListed && !isExtract) {
                 Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
                     "mNotificationData");
                 Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
@@ -198,6 +201,13 @@ public class XposedMod implements IXposedHookLoadPackage,
                 } else {
                   sbn.getNotification().number = oldSbn.getNotification().number + 1;
                 }
+              } else if (isListed && isExtract) {
+                try {
+                  extractNumber(sbn.getNotification());
+                } catch (Exception e) {
+                  XposedBridge.log("Notification did not provide extractable number. Info: "
+                      + sbn.toString());
+                }
               }
             }
           }
@@ -218,7 +228,9 @@ public class XposedMod implements IXposedHookLoadPackage,
 
             if (sbn.getNotification().number == 0) {
               mSettingsHelper.reload();
-              if (mSettingsHelper.isListed(sbn.getPackageName())) {
+              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
+              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
+              if (isListed && !isExtract) {
                 HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
                     .getObjectField(param.thisObject, "mNotifications");
 
@@ -229,6 +241,18 @@ public class XposedMod implements IXposedHookLoadPackage,
                   } else {
                     sbn.getNotification().number = oldSbn.getNotification().number + 1;
                   }
+                }
+              } else if (isListed && isExtract) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                  try {
+                    extractNumber(sbn.getNotification());
+                  } catch (Exception e) {
+                    XposedBridge.log("Notification did not provide extractable number. Info: "
+                        + sbn.toString());
+                  }
+                } else {
+                  XposedBridge
+                      .log("Sorry, notification number extracting is not supported on versions lower than KITKAT.");
                 }
               }
             }
@@ -273,5 +297,25 @@ public class XposedMod implements IXposedHookLoadPackage,
             }
           }
         });
+  }
+
+  @TargetApi(19)
+  private static void extractNumber(Notification notification) throws NumberFormatException {
+    String notification_text = notification.extras
+        .getString(Notification.EXTRA_SUMMARY_TEXT);
+    if (notification_text != null) {
+      int i = findFirstIntegerInString(notification_text);
+      notification.number = i;
+    }
+  }
+
+  private static int findFirstIntegerInString(String str) throws NumberFormatException {
+    int i = 0;
+    while (!Character.isDigit(str.charAt(i)))
+      i++;
+    int j = i;
+    while (Character.isDigit(str.charAt(j)))
+      j++;
+    return Integer.parseInt(str.substring(i, j));
   }
 }

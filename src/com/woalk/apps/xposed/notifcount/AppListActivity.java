@@ -192,6 +192,8 @@ public class AppListActivity extends ListActivity {
             mSettingsHelper.addListItem(item.summary);
           } else {
             mSettingsHelper.removeListItem(item.summary);
+            holder.radio0.setChecked(false);
+            holder.radio1.setChecked(true);
           }
         }
       });
