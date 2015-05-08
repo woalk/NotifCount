@@ -1,5 +1,5 @@
 
-package com.woalk.apps.xposed.notifcount;
+package de.bbukowski.notifcount;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;

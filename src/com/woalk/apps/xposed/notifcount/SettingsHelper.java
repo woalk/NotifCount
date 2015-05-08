@@ -1,5 +1,5 @@
 
-package com.woalk.apps.xposed.notifcount;
+package de.bbukowski.notifcount;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,7 +13,7 @@ import java.util.HashSet;
  */
 public class SettingsHelper {
 
-  public static final String PACKAGE_NAME = "com.woalk.apps.xposed.notifcount";
+  private static final String PACKAGE_NAME = "de.bbukowski.notifcount";
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";

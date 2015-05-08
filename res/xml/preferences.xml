@@ -6,7 +6,7 @@
             android:key="apps_list"
             android:summary="@string/pref_apps_increase_onupdate_summary"
             android:title="@string/pref_apps_increase_onupdate_title" >
-            <intent android:action="com.woalk.apps.xposed.notifcount.WHITELIST" />
+            <intent android:action="de.bbukowski.notifcount.WHITELIST" />
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_appearance" >

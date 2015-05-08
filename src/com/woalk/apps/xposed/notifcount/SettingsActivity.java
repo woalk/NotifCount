@@ -1,5 +1,4 @@
-
-package com.woalk.apps.xposed.notifcount;
+package de.bbukowski.notifcount;
 
 import android.app.Activity;
 import android.os.Bundle;

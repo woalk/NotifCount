@@ -1,5 +1,5 @@
 
-package com.woalk.apps.xposed.notifcount;
+package de.bbukowski.notifcount;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
