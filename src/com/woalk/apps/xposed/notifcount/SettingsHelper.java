@@ -113,4 +113,48 @@ public class SettingsHelper {
     return number;
   }
 
+  public static class AppSetting {
+    public static final int SETTING_AUTO = 0;
+    public static final int SETTING_NONE = 1;
+    public static final int SETTING_STOCK = 2;
+    public static final int SETTING_TITLE = 3;
+    public static final int SETTING_CONTENT = 4;
+    public static final int SETTING_SHORTSUMMARY = 5;
+    public static final int SETTING_COUNTUPDATES = 6;
+
+    private String mPackageName;
+    private int mPreferredSetting;
+
+    public AppSetting(String packageName) {
+      setPackageName(packageName);
+    }
+
+    public AppSetting(String packageName, int setting) {
+      setPackageName(packageName);
+      setPreferredSetting(setting);
+    }
+
+    public String getPackageName() {
+      return mPackageName;
+    }
+
+    public void setPackageName(String pkg) {
+      this.mPackageName = pkg;
+    }
+
+    public int getPreferredSetting() {
+      return mPreferredSetting;
+    }
+
+    public void setPreferredSetting(int mPreferredSetting) {
+      this.mPreferredSetting = mPreferredSetting;
+    }
+
+    @Override
+    public String toString() {
+      return this.getPackageName() + "==" + String.valueOf(this.getPreferredSetting());
+    }
+
+  }
+
 }
