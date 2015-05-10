@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 
 import de.robv.android.xposed.XSharedPreferences;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by bbukowski on 07.08.14. Maintained by woalk since 2015/05/05.
@@ -18,13 +20,11 @@ public class SettingsHelper {
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
-  private static final String NOTIFICATION_EXTRACT_FILTER_LIST = "apps_list_extract";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
 
   private XSharedPreferences mXSharedPreferences;
   private SharedPreferences mSharedPreferences;
-  private HashSet<String> mListItems;
-  private HashSet<String> mListItemsExtract;
+  private List<String> mListItems;
 
   // Called from module's classes.
   public SettingsHelper() {
@@ -41,67 +41,57 @@ public class SettingsHelper {
   public void reload() {
     mXSharedPreferences.reload();
     mListItems = getListItems();
-    mListItemsExtract = getListItemsExtract();
   }
 
-  public HashSet<String> getListItems() {
-    HashSet<String> set = new HashSet<String>();
+  public List<String> getListItems() {
+    List<String> set = new ArrayList<String>();
     if (mSharedPreferences != null)
-      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, new HashSet<String>()));
     else if (mXSharedPreferences != null)
-      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, set));
+      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_FILTER_LIST, new HashSet<String>()));
     return set;
   }
 
-  public void addListItem(String listItem) {
-    mListItems.add(listItem);
+  public void alterListItem(AppSetting setting) {
+    int listed = getListedIndex(setting.getPackageName());
+    if (listed == -1) {
+      mListItems.add(setting.toString());
+    } else {
+      mListItems.remove(listed);
+      mListItems.add(setting.toString());
+    }
     SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
-    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, mListItems);
+    HashSet<String> set = new HashSet<>();
+    set.addAll(mListItems);
+    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, set);
     prefEditor.apply();
   }
 
-  public void removeListItem(String listItem) {
+  public void removeListItem(String packageName) {
     SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
-    mListItems.remove(listItem);
-    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, mListItems);
-    mListItemsExtract.remove(listItem);
-    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
+    mListItems.remove(getListedIndex(packageName));
+    HashSet<String> set = new HashSet<>();
+    set.addAll(mListItems);
+    prefEditor.putStringSet(NOTIFICATION_FILTER_LIST, set);
     prefEditor.apply();
   }
 
-  public boolean isListed(String s) {
-    if (mListItems == null)
-      mListItems = getListItems();
-    return mListItems.contains(s);
+  public int getListedIndex(final String packageName) {
+    return mListItems.indexOf(new Object() {
+      @Override
+      public boolean equals(Object other) {
+        return ((String) other).contains(packageName + "==");
+      }
+    });
   }
 
-  public HashSet<String> getListItemsExtract() {
-    HashSet<String> set = new HashSet<String>();
-    if (mSharedPreferences != null)
-      set.addAll(mSharedPreferences.getStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, set));
-    else if (mXSharedPreferences != null)
-      set.addAll(mXSharedPreferences.getStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, set));
-    return set;
-  }
-
-  public void addListItemExtract(String listItem) {
-    mListItemsExtract.add(listItem);
-    SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
-    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
-    prefEditor.apply();
-  }
-
-  public void removeListItemExtract(String listItem) {
-    SharedPreferences.Editor prefEditor = mSharedPreferences.edit();
-    mListItemsExtract.remove(listItem);
-    prefEditor.putStringSet(NOTIFICATION_EXTRACT_FILTER_LIST, mListItemsExtract);
-    prefEditor.apply();
-  }
-
-  public boolean isListedExtract(String s) {
-    if (mListItemsExtract == null)
-      mListItemsExtract = getListItemsExtract();
-    return mListItemsExtract.contains(s);
+  public AppSetting getSetting(String packageName) {
+    int listedI = getListedIndex(packageName);
+    if (listedI == -1)
+      return null;
+    String pref = mListItems.get(listedI);
+    int i = pref.indexOf("==");
+    return new AppSetting(pref.substring(0, i), Integer.valueOf(pref.substring(i + 2)));
   }
 
   public int getNumberSize() {
