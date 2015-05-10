@@ -155,6 +155,27 @@ public class SettingsHelper {
       return this.getPackageName() + "==" + String.valueOf(this.getPreferredSetting());
     }
 
+    public String toShortString() {
+      switch (getPreferredSetting()) {
+        case SettingsHelper.AppSetting.SETTING_AUTO:
+          return "A";
+        case SettingsHelper.AppSetting.SETTING_CONTENT:
+          return "C";
+        case SettingsHelper.AppSetting.SETTING_COUNTUPDATES:
+          return "CU";
+        case SettingsHelper.AppSetting.SETTING_NONE:
+          return "N";
+        case SettingsHelper.AppSetting.SETTING_SHORTSUMMARY:
+          return "S";
+        case SettingsHelper.AppSetting.SETTING_STOCK:
+          return "Sy";
+        case SettingsHelper.AppSetting.SETTING_TITLE:
+          return "T";
+        default:
+          return "?";
+      }
+    }
+
   }
 
 }
