@@ -15,8 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -57,10 +55,8 @@ public class AppListActivity extends ListActivity {
 
   private static class AppInfo {
     String title;
-    String summary;
+    SettingsHelper.AppSetting app;
     Drawable icon;
-    boolean enabled;
-    boolean extract;
   }
 
   private List<AppInfo> loadApps(ProgressDialog dialog) {
@@ -75,10 +71,10 @@ public class AppListActivity extends ListActivity {
     for (ApplicationInfo app : packages) {
       AppInfo appInfo = new AppInfo();
       appInfo.title = (String) app.loadLabel(packageManager);
-      appInfo.summary = app.packageName;
+      appInfo.app = mSettingsHelper.getSetting(app.packageName);
+      if (appInfo.app == null)
+        appInfo.app = new SettingsHelper.AppSetting(app.packageName);
       appInfo.icon = app.loadIcon(packageManager);
-      appInfo.enabled = mSettingsHelper.isListed(app.packageName);
-      appInfo.extract = mSettingsHelper.isListedExtract(app.packageName);
       apps.add(appInfo);
       dialog.setProgress(i++);
     }
@@ -86,10 +82,10 @@ public class AppListActivity extends ListActivity {
     Collections.sort(apps, new Comparator<AppInfo>() {
       @Override
       public int compare(AppInfo appInfo1, AppInfo appInfo2) {
-        boolean app1 = mSettingsHelper.isListed(appInfo1.summary);
-        boolean app2 = mSettingsHelper.isListed(appInfo2.summary);
+        boolean app1 = mSettingsHelper.getListedIndex(appInfo1.app.getPackageName()) != -1;
+        boolean app2 = mSettingsHelper.getListedIndex(appInfo2.app.getPackageName()) != -1;
 
-        if (app1 && app2 || !app1 && !app2) {
+        if (app1 == app2) {
           return appInfo1.title.compareToIgnoreCase(appInfo2.title);
         } else if (app1) {
           return -1;
@@ -181,23 +177,9 @@ public class AppListActivity extends ListActivity {
       }
 
       holder.title.setText(item.title);
-      holder.summary.setText(item.summary);
+      holder.summary.setText(item.app.getPackageName());
       holder.icon.setImageDrawable(item.icon);
 
-      holder.checkbox.setChecked(item.enabled);
-      holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-          item.enabled = isChecked;
-          if (isChecked) {
-            mSettingsHelper.addListItem(item.summary);
-          } else {
-            mSettingsHelper.removeListItem(item.summary);
-            holder.radio0.setChecked(false);
-            holder.radio1.setChecked(true);
-          }
-        }
-      });
 
       holder.itemlayout.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -219,19 +201,7 @@ public class AppListActivity extends ListActivity {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
         holder.radio0.setVisibility(View.GONE);
 
-      holder.radio0.setChecked(item.extract);
-      holder.radio1.setChecked(!item.extract);
-      holder.radio0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-          item.extract = isChecked;
-          if (isChecked) {
-            mSettingsHelper.addListItemExtract(item.summary);
-          } else {
-            mSettingsHelper.removeListItemExtract(item.summary);
-          }
-        }
-      });
+
 
       return view;
     }
