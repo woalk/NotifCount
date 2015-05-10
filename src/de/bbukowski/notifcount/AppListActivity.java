@@ -184,6 +184,7 @@ public class AppListActivity extends ListActivity {
       holder.summary.setText(item.summary);
       holder.icon.setImageDrawable(item.icon);
 
+      holder.checkbox.setOnCheckedChangeListener(null);
       holder.checkbox.setChecked(item.enabled);
       holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
@@ -219,6 +220,7 @@ public class AppListActivity extends ListActivity {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
         holder.radio0.setVisibility(View.GONE);
 
+      holder.radio0.setOnCheckedChangeListener(null);
       holder.radio0.setChecked(item.extract);
       holder.radio1.setChecked(!item.extract);
       holder.radio0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

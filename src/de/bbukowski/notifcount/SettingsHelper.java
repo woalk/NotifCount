@@ -1,6 +1,7 @@
 
 package de.bbukowski.notifcount;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -31,6 +32,7 @@ public class SettingsHelper {
   }
 
   // Called from activities.
+  @SuppressLint("WorldReadableFiles")
   @SuppressWarnings("deprecation")
   public SettingsHelper(Context context) {
     mSharedPreferences = context.getSharedPreferences(PREFS, Context.MODE_WORLD_READABLE);
