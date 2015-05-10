@@ -145,7 +145,7 @@ public class AppListActivity extends ListActivity {
       ImageView icon;
       TextView title;
       TextView summary;
-      CheckBox checkbox;
+      TextView value;
       LinearLayout itemlayout;
       RadioGroup radioG;
       RadioButton radio0;
@@ -164,7 +164,7 @@ public class AppListActivity extends ListActivity {
         holder.icon = (ImageView) view.findViewById(R.id.icon);
         holder.title = (TextView) view.findViewById(android.R.id.title);
         holder.summary = (TextView) view.findViewById(android.R.id.summary);
-        holder.checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        holder.value = (TextView) view.findViewById(R.id.value);
         holder.itemlayout = (LinearLayout) view.findViewById(R.id.itemlayout);
         holder.radioG = (RadioGroup) view.findViewById(R.id.radioG);
         holder.radio0 = (RadioButton) view.findViewById(R.id.radio0);
@@ -180,6 +180,7 @@ public class AppListActivity extends ListActivity {
       holder.summary.setText(item.app.getPackageName());
       holder.icon.setImageDrawable(item.icon);
 
+      holder.value.setText(item.app.toShortString());
 
       holder.itemlayout.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -192,7 +193,7 @@ public class AppListActivity extends ListActivity {
       View.OnClickListener radioClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          holder.checkbox.setChecked(true);
+          holder.value.setText(item.app.toShortString());
         }
       };
       holder.radio0.setOnClickListener(radioClick);

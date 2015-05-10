@@ -62,15 +62,21 @@
             android:layout_weight="0"
             android:background="@android:color/darker_gray" />
 
-        <CheckBox
-            android:id="@+id/checkbox"
+        <TextView
+            android:id="@+id/value"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="2dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="2dp"
             android:layout_marginStart="6dp"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            android:textColor="#009688"
+            android:textSize="21sp" />
 
     </LinearLayout>
 
