@@ -112,18 +112,21 @@ public class SettingsFragment extends PreferenceFragment implements
         .setContentIntent(resultPendingIntent)
         .setAutoCancel(true);
 
+    NotificationManager notificationManager = (NotificationManager)
+        getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
     if (setNumber) {
       int number = 0;
       while (number < 2) {
         number = mRandom.nextInt(30);
       }
       builder.setNumber(number);
+
+      notificationManager.cancelAll();
     }
 
     Notification n = builder.build();
 
-    NotificationManager notificationManager = (NotificationManager)
-        getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
     notificationManager.notify(0, n);
   }
 
@@ -154,6 +157,8 @@ public class SettingsFragment extends PreferenceFragment implements
 
     NotificationManager notificationManager = (NotificationManager)
         getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.cancelAll();
+    notificationManager.notify(0, n);
     notificationManager.notify(0, n);
   }
 
