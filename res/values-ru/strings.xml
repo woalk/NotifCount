@@ -18,7 +18,7 @@
 
 Примечание:
 Это необходимо, ТОЛЬКО если приложение не устанавлевает количество уведомлений само!"</string>
-    <string name="pref_appear_number_size">Внешний вид цыфр</string>
+    <string name="pref_appear_number_size">Внешний вид цифр</string>
     <string name="pref_appear_number_size_0">Непрозрачный (по умолчанию)</string>
     <string name="pref_appear_number_size_1">Прозрачный</string>
     <string name="pref_appear_number_size_2">Маленький</string>
