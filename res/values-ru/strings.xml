@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Счётчик уведомлений</string>
+    <string name="settings_increment_on_update">Временное решение</string>
+    <string name="settings_appearance">Внешний вид</string>
+    <string name="settings_debug">Примерка</string>
+    <string name="settings_info">Информация</string>
+    <string name="test_notification_text">Это тестовое уведомление!</string>
+    <string name="test_notification_only_text">%d мой номер!</string>
+    <string name="loading">Загрузка…</string>
+    <string name="app_icon_cd">Иконка приложения</string>
+    <string name="pref_apps_increase_onupdate_title">Белый список приложений</string>
+    <string name="pref_apps_increase_onupdate_textnumber">Извлекать номер из уведомления</string>
+    <string name="pref_apps_increase_onupdate_count">Считать уведомления</string>
+    <string name="pref_apps_increase_onupdate_summary">"Временное решение для приложений, которые не задают номер уведомления.
+
+Каждый раз, когда выбранное приложение обновляет уведомления, номер будет автоматически увеличиваться.
+
+Примечание:
+Это необходимо, ТОЛЬКО если приложение не устанавливает количество уведомлений само!"</string>
+    <string name="pref_appear_number_size">Внешний вид цифр</string>
+    <string name="pref_appear_number_size_0">Непрозрачный (по умолчанию)</string>
+    <string name="pref_appear_number_size_1">Прозрачный</string>
+    <string name="pref_appear_number_size_2">Маленький</string>
+    <string name="pref_appear_number_size_default">"По умолчанию в устройстве
+(например в AOSP: красный)"</string>
+    <string name="pref_appear_show_app_icon_title">Показывать значок в лаунчере</string>
+    <string name="pref_appear_show_app_icon_summary">По прежнему можно запустить настройки модуля через Xposed Installer.</string>
+    <string name="pref_test_notif_w_number_title">С номером</string>
+    <string name="pref_test_notif_w_number_summary">Создает тестовое уведомления со случайным номером.</string>
+    <string name="pref_test_notif_wo_number_title">Без номера</string>
+    <string name="pref_test_notif_wo_number_summary">"Создаёт тестового уведомления без номера.
+ 
+Примечание:
+Показывает накладку с номером только, если это приложение помечено “Считать уведомления” в белом списоке выше."</string>
+    <string name="pref_test_notif_wt_number_title">Число только текстом</string>
+    <string name="pref_test_notif_wt_number_summary">"Создает уведомления без номера, но содержет номер в тексте.
+ 
+Примечание:
+Показывает накладку с номером только, если это приложение помечено “Извлекать номер из уведомления” в белом списоке выше."</string>
+    <string name="pref_version_number_title">"Notification Count(Счётчик уведомлений)"</string>
+    <string name="pref_version_number_summary">"Версия %s 
+
+Базовый модуль от Benjamin Bukowski,
+GitHub пользователь bbukowski. 
+Отказался продолжать развитие. 
+Поэтому,с тех пор разработкой модуля занимается Woalk
+GitHub пользователь woalk."</string>
+</resources>
