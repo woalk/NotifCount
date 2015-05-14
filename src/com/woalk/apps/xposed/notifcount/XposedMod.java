@@ -300,22 +300,29 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(19)
-  private static void extractNumber(Notification notification) throws NumberFormatException {
+  private static boolean extractNumberFromSummery(Notification notification) {
     String notification_text = notification.extras
         .getString(Notification.EXTRA_SUMMARY_TEXT);
     if (notification_text != null) {
       int i = findFirstIntegerInString(notification_text);
-      notification.number = i;
-    }
+      if (i == 0)
+        return false;
+      else {
+        notification.number = i;
+        return true;
+      }
+    } else
+      return false;
   }
 
-  private static int findFirstIntegerInString(String str) throws NumberFormatException {
+  private static int findFirstIntegerInString(String str) {
     int i = 0;
     while (!Character.isDigit(str.charAt(i)))
       i++;
     int j = i;
     while (Character.isDigit(str.charAt(j)))
       j++;
-    return Integer.parseInt(str.substring(i, j));
+    String intstr = str.substring(i, j);
+    return !intstr.equals("") ? Integer.parseInt(intstr) : 0;
   }
 }
