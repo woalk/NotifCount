@@ -17,6 +17,8 @@ import android.os.IBinder;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
 
+import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
+
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -191,7 +193,8 @@ public class XposedMod implements IXposedHookLoadPackage,
 
               final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
                   .getObjectField(oldEntry, "notification");
-              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification());
+              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                  mSettingsHelper.getSetting(sbn.getPackageName()));
             }
           }
         });
@@ -215,9 +218,11 @@ public class XposedMod implements IXposedHookLoadPackage,
 
               if (mNotifications.containsKey(key)) {
                 StatusBarNotification oldSbn = mNotifications.get(key);
-                autoApplyNumber(sbn.getNotification(), oldSbn.getNotification());
+                autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                    mSettingsHelper.getSetting(sbn.getPackageName()));
               } else {
-                autoApplyNumber(sbn.getNotification());
+                autoApplyNumber(sbn.getNotification(),
+                    mSettingsHelper.getSetting(sbn.getPackageName()));
               }
             }
           }
@@ -249,16 +254,17 @@ public class XposedMod implements IXposedHookLoadPackage,
                 Object oldSbn = mNotifications.get(key);
                 Notification oldNotification = (Notification) XposedHelpers
                     .getObjectField(oldSbn, "notification");
-                autoApplyNumber(notification, oldNotification);
+                autoApplyNumber(notification, oldNotification, mSettingsHelper.getSetting(pkg));
               } else {
-                autoApplyNumber(notification);
+                autoApplyNumber(notification, mSettingsHelper.getSetting(pkg));
               }
             }
           }
         });
   }
 
-  private static void autoApplyNumber(Notification newNotif, Notification oldNotif) {
+  private static void autoApplyNumber(Notification newNotif, Notification oldNotif,
+      AppSetting setting) {
     if (newNotif.number != 0)
       // Notification already has a number. Setting a number is not needed.
       return;
@@ -282,8 +288,8 @@ public class XposedMod implements IXposedHookLoadPackage,
     }
   }
 
-  private static void autoApplyNumber(Notification notif) {
-    autoApplyNumber(notif, null);
+  private static void autoApplyNumber(Notification notif, AppSetting setting) {
+    autoApplyNumber(notif, null, setting);
   }
 
   @TargetApi(19)
