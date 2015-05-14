@@ -299,6 +299,50 @@ public class XposedMod implements IXposedHookLoadPackage,
         });
   }
 
+  private static void autoApplyNumber(Notification newNotif, Notification oldNotif) {
+    if (newNotif.number != 0)
+      // Notification already has a number. Setting a number is not needed.
+      return;
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      // Try to find a number in the title.
+      if (!extractNumberFromTitle(newNotif)) {
+        // If not found in the title, try to find in the summary.
+        if (extractNumberFromSummery(newNotif))
+          return;
+      }
+    } else
+      return;
+
+    if (oldNotif != null) {
+      // Everything before did not work, auto-increase on update.
+      if (oldNotif.number == 0)
+        newNotif.number = 2;
+      else
+        newNotif.number = oldNotif.number + 1;
+    }
+  }
+
+  private static void autoApplyNumber(Notification notif) {
+    autoApplyNumber(notif, null);
+  }
+
+  @TargetApi(19)
+  private static boolean extractNumberFromTitle(Notification notification) {
+    String notification_text = notification.extras
+        .getString(Notification.EXTRA_TITLE);
+    if (notification_text != null) {
+      int i = findFirstIntegerInString(notification_text);
+      if (i == 0)
+        return false;
+      else {
+        notification.number = i;
+        return true;
+      }
+    } else
+      return false;
+  }
+
   @TargetApi(19)
   private static boolean extractNumberFromSummery(Notification notification) {
     String notification_text = notification.extras
