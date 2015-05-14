@@ -361,10 +361,10 @@ public class XposedMod implements IXposedHookLoadPackage,
 
   private static int findFirstIntegerInString(String str) {
     int i = 0;
-    while (!Character.isDigit(str.charAt(i)))
+    while (i < (str.length() - 1) && !Character.isDigit(str.charAt(i)))
       i++;
     int j = i;
-    while (Character.isDigit(str.charAt(j)))
+    while (j < (str.length() - 1) && Character.isDigit(str.charAt(j)))
       j++;
     String intstr = str.substring(i, j);
     return !intstr.equals("") ? Integer.parseInt(intstr) : 0;
