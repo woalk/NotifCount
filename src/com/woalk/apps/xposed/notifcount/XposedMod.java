@@ -21,7 +21,6 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -172,43 +171,27 @@ public class XposedMod implements IXposedHookLoadPackage,
           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             StatusBarNotification sbn = (StatusBarNotification) param.args[0];
             if (sbn.getNotification().number == 0) {
-              mSettingsHelper.reload();
-              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
-              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
-              if (isListed && !isExtract) {
-                Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
-                    "mNotificationData");
-                Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
-                    "mHeadsUpNotificationView");
+              Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
+                  "mNotificationData");
+              Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
+                  "mHeadsUpNotificationView");
 
-                final String key = sbn.getKey();
-                boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
-                    "isHeadsUp", key);
-                Object oldEntry;
-                if (wasHeadsUp) {
-                  oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
-                } else {
-                  oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
-                }
-                if (oldEntry == null) {
-                  return;
-                }
-
-                final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
-                    .getObjectField(oldEntry, "notification");
-                if (oldSbn.getNotification().number == 0) {
-                  sbn.getNotification().number = 2;
-                } else {
-                  sbn.getNotification().number = oldSbn.getNotification().number + 1;
-                }
-              } else if (isListed && isExtract) {
-                try {
-                  extractNumber(sbn.getNotification());
-                } catch (Exception e) {
-                  XposedBridge.log("Notification did not provide extractable number. Info: "
-                      + sbn.toString());
-                }
+              final String key = sbn.getKey();
+              boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
+                  "isHeadsUp", key);
+              Object oldEntry;
+              if (wasHeadsUp) {
+                oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
+              } else {
+                oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
               }
+              if (oldEntry == null) {
+                return;
+              }
+
+              final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
+                  .getObjectField(oldEntry, "notification");
+              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification());
             }
           }
         });
@@ -227,33 +210,14 @@ public class XposedMod implements IXposedHookLoadPackage,
             StatusBarNotification sbn = (StatusBarNotification) param.args[1];
 
             if (sbn.getNotification().number == 0) {
-              mSettingsHelper.reload();
-              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
-              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
-              if (isListed && !isExtract) {
-                HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
-                    .getObjectField(param.thisObject, "mNotifications");
+              HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
+                  .getObjectField(param.thisObject, "mNotifications");
 
-                if (mNotifications.containsKey(key)) {
-                  StatusBarNotification oldSbn = mNotifications.get(key);
-                  if (oldSbn.getNotification().number == 0) {
-                    sbn.getNotification().number = 2;
-                  } else {
-                    sbn.getNotification().number = oldSbn.getNotification().number + 1;
-                  }
-                }
-              } else if (isListed && isExtract) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                  try {
-                    extractNumber(sbn.getNotification());
-                  } catch (Exception e) {
-                    XposedBridge.log("Notification did not provide extractable number. Info: "
-                        + sbn.toString());
-                  }
-                } else {
-                  XposedBridge
-                      .log("Sorry, notification number extracting is not supported on versions lower than KITKAT.");
-                }
+              if (mNotifications.containsKey(key)) {
+                StatusBarNotification oldSbn = mNotifications.get(key);
+                autoApplyNumber(sbn.getNotification(), oldSbn.getNotification());
+              } else {
+                autoApplyNumber(sbn.getNotification());
               }
             }
           }
@@ -278,21 +242,16 @@ public class XposedMod implements IXposedHookLoadPackage,
             if (notification.number == 0) {
               String pkg = (String) XposedHelpers.getObjectField(
                   sbn, "pkg");
-              mSettingsHelper.reload();
-              if (mSettingsHelper.isListed(pkg)) {
-                HashMap<IBinder, ?> mNotifications = (HashMap<IBinder, ?>) XposedHelpers
-                    .getObjectField(param.thisObject, "mNotifications");
+              HashMap<IBinder, ?> mNotifications = (HashMap<IBinder, ?>) XposedHelpers
+                  .getObjectField(param.thisObject, "mNotifications");
 
-                if (mNotifications.containsKey(key)) {
-                  Object oldSbn = mNotifications.get(key);
-                  Notification oldNotification = (Notification) XposedHelpers
-                      .getObjectField(oldSbn, "notification");
-                  if (oldNotification.number == 0) {
-                    notification.number = 2;
-                  } else {
-                    notification.number = oldNotification.number + 1;
-                  }
-                }
+              if (mNotifications.containsKey(key)) {
+                Object oldSbn = mNotifications.get(key);
+                Notification oldNotification = (Notification) XposedHelpers
+                    .getObjectField(oldSbn, "notification");
+                autoApplyNumber(notification, oldNotification);
+              } else {
+                autoApplyNumber(notification);
               }
             }
           }
