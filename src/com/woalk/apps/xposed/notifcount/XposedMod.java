@@ -265,15 +265,23 @@ public class XposedMod implements IXposedHookLoadPackage,
 
   private static void autoApplyNumber(Notification newNotif, Notification oldNotif,
       AppSetting setting) {
-    if (newNotif.number != 0)
+    if (newNotif.number != 0 || setting.getPreferredSetting() == AppSetting.SETTING_NONE)
       // Notification already has a number. Setting a number is not needed.
       return;
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    // This only works on KitKat or higher.
+    // Also, ignore this if the app should only count updates.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        && setting.getPreferredSetting() != AppSetting.SETTING_COUNTUPDATES) {
       // Try to find a number in the title.
-      if (!extractNumberFromTitle(newNotif)) {
+      // If SETTING_SHORTSUMMARY is set, jump directly to checking the summary
+      // (ignore title).
+      if (setting.getPreferredSetting() == AppSetting.SETTING_SHORTSUMMARY
+          || !extractNumberFromTitle(newNotif)) {
         // If not found in the title, try to find in the summary.
-        if (extractNumberFromSummery(newNotif))
+        // If SETTING_TITLE is set, ignore checking for the summary.
+        if (setting.getPreferredSetting() == AppSetting.SETTING_TITLE
+            || extractNumberFromSummery(newNotif))
           return;
       } else
         return;
