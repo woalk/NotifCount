@@ -193,6 +193,9 @@ public class XposedMod implements IXposedHookLoadPackage,
 
               final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
                   .getObjectField(oldEntry, "notification");
+
+              mSettingsHelper.reload();
+
               autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
                   mSettingsHelper.getSetting(sbn.getPackageName()));
             }
@@ -215,6 +218,8 @@ public class XposedMod implements IXposedHookLoadPackage,
             if (sbn.getNotification().number == 0) {
               HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
                   .getObjectField(param.thisObject, "mNotifications");
+
+              mSettingsHelper.reload();
 
               if (mNotifications.containsKey(key)) {
                 StatusBarNotification oldSbn = mNotifications.get(key);
@@ -249,6 +254,8 @@ public class XposedMod implements IXposedHookLoadPackage,
                   sbn, "pkg");
               HashMap<IBinder, ?> mNotifications = (HashMap<IBinder, ?>) XposedHelpers
                   .getObjectField(param.thisObject, "mNotifications");
+
+              mSettingsHelper.reload();
 
               if (mNotifications.containsKey(key)) {
                 Object oldSbn = mNotifications.get(key);
