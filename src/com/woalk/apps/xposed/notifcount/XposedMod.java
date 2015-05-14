@@ -275,9 +275,9 @@ public class XposedMod implements IXposedHookLoadPackage,
         // If not found in the title, try to find in the summary.
         if (extractNumberFromSummery(newNotif))
           return;
-      }
-    } else
-      return;
+      } else
+        return;
+    }
 
     if (oldNotif != null) {
       // Everything before did not work, auto-increase on update.
