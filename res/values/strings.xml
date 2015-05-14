@@ -10,10 +10,10 @@
     <string name="test_notification_only_text">%d is my number!</string>
     <string name="loading">Loading&#8230;</string>
     <string name="app_icon_cd">Application icon</string>
-    <string name="pref_apps_increase_onupdate_title">Whitelist apps</string>
+    <string name="pref_apps_increase_onupdate_title">Exception list</string>
     <string name="pref_apps_increase_onupdate_textnumber">Extract number from notification</string>
     <string name="pref_apps_increase_onupdate_count">Count updates</string>
-    <string name="pref_apps_increase_onupdate_summary">Workaround for apps which won\'t set a number to notification.\n\nEvery time a selected app updates a notification, the number will automatically be incremented.\n\nNote:\nThis is ONLY necessary if an app does not set the notification number itself!</string>
+    <string name="pref_apps_increase_onupdate_summary">Force specific apps to use a specific method to retrieve the notification number (or to not use a number at all).</string>
     <string name="pref_appear_number_size">Number Appearance</string>
     <string name="pref_appear_number_size_0">Opaque (default)</string>
     <string name="pref_appear_number_size_1">Transparent</string>
