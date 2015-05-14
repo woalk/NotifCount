@@ -29,6 +29,7 @@ public class SettingsHelper {
   // Called from module's classes.
   public SettingsHelper() {
     mXSharedPreferences = new XSharedPreferences(PACKAGE_NAME, PREFS);
+    reload();
   }
 
   // Called from activities.
@@ -36,6 +37,7 @@ public class SettingsHelper {
   @SuppressWarnings("deprecation")
   public SettingsHelper(Context context) {
     mSharedPreferences = context.getSharedPreferences(PREFS, Context.MODE_WORLD_READABLE);
+    reload();
   }
 
   public void reload() {
