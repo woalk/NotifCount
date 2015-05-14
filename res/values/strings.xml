@@ -24,11 +24,9 @@
     <string name="pref_test_notif_w_number_title">With number</string>
     <string name="pref_test_notif_w_number_summary">Creates a test notification with a random number.</string>
     <string name="pref_test_notif_wo_number_title">Without number</string>
-    <string name="pref_test_notif_wo_number_summary">Creates a test notification without a number.\n
-        \nNote:\nOnly shows a number overlay if this app is whitelisted above with “Count updates”.</string>
+    <string name="pref_test_notif_wo_number_summary">Creates a test notification without a number.</string>
     <string name="pref_test_notif_wt_number_title">With only text number</string>
-    <string name="pref_test_notif_wt_number_summary">Creates a test notification without a number, but with a summary text containing the number.\n
-        \nNote:\nOnly shows a number overlay if this app is whitelisted above with “Extract number from notification”.</string>
+    <string name="pref_test_notif_wt_number_summary">Creates a test notification without a number, but with a summary text containing the number.</string>
     <string name="pref_version_number_title">Notification Count Version</string>
     <string name="pref_version_number_summary">Version %s
         \n\nBase module by Benjamin Bukowski,\nGitHub user bbukowski.

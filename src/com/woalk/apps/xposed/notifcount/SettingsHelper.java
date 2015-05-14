@@ -41,7 +41,8 @@ public class SettingsHelper {
   }
 
   public void reload() {
-    mXSharedPreferences.reload();
+    if (mXSharedPreferences != null)
+      mXSharedPreferences.reload();
     mListItems = getListItems();
   }
 
