@@ -39,6 +39,8 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String CLASS_STATUSBARICON = "com.android.internal.statusbar.StatusBarIcon";
   private static final String CLASS_STATUSBARMANAGERSERVICE = "com.android.server.StatusBarManagerService";
   private static final String CLASS_BASESTATUSBAR = PKG_SYSTEMUI + ".statusbar.BaseStatusBar";
+  private static final String CLASS_PHONESTATUSBAR = PKG_SYSTEMUI
+      + ".statusbar.phone.PhoneStatusBar";
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
 
   private static SettingsHelper mSettingsHelper;
@@ -143,6 +145,10 @@ public class XposedMod implements IXposedHookLoadPackage,
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       hookAutoDecide_all_api21(lpparam.classLoader);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      hookAutoDecide_new_api18(lpparam.classLoader);
+    } else {
+      hookAutoDecide_new_api15(lpparam.classLoader);
     }
   }
 
@@ -201,6 +207,21 @@ public class XposedMod implements IXposedHookLoadPackage,
             }
           }
         });
+    Class<?> clazz2 = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    XposedHelpers.findAndHookMethod(clazz2, "addNotification", StatusBarNotification.class,
+        RankingMap.class, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            StatusBarNotification sbn = (StatusBarNotification) param.args[0];
+            if (sbn.getNotification().number == 0) {
+              mSettingsHelper.reload();
+
+              autoApplyNumber(sbn.getNotification(),
+                  mSettingsHelper.getSetting(sbn.getPackageName()));
+            }
+          }
+        });
   }
 
   @TargetApi(18)
@@ -229,6 +250,26 @@ public class XposedMod implements IXposedHookLoadPackage,
                 autoApplyNumber(sbn.getNotification(),
                     mSettingsHelper.getSetting(sbn.getPackageName()));
               }
+            }
+          }
+        });
+  }
+
+  @TargetApi(18)
+  private void hookAutoDecide_new_api18(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    XposedHelpers.findAndHookMethod(clazz, "addNotification", IBinder.class,
+        StatusBarNotification.class, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            StatusBarNotification sbn = (StatusBarNotification) param.args[1];
+
+            if (sbn.getNotification().number == 0) {
+              mSettingsHelper.reload();
+
+              autoApplyNumber(sbn.getNotification(),
+                  mSettingsHelper.getSetting(sbn.getPackageName()));
             }
           }
         });
@@ -265,6 +306,31 @@ public class XposedMod implements IXposedHookLoadPackage,
               } else {
                 autoApplyNumber(notification, mSettingsHelper.getSetting(pkg));
               }
+            }
+          }
+        });
+  }
+
+  private void hookAutoDecide_new_api15(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    Class<?> clazzSbn = XposedHelpers.findClass(CLASS_STATUSBARNOTIFICATION_API15, null);
+
+    XposedHelpers.findAndHookMethod(clazz, "addNotification", IBinder.class,
+        clazzSbn, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            Object sbn = param.args[1];
+
+            Notification notification = (Notification) XposedHelpers.getObjectField(
+                sbn, "notification");
+            if (notification.number == 0) {
+              String pkg = (String) XposedHelpers.getObjectField(
+                  sbn, "pkg");
+
+              mSettingsHelper.reload();
+
+              autoApplyNumber(notification, mSettingsHelper.getSetting(pkg));
             }
           }
         });
