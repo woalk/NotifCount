@@ -60,9 +60,9 @@ public class XposedMod implements IXposedHookLoadPackage,
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-        hookAutoIncrementMethodsApi18();
+        hookAutoDecide_update_api18();
       else
-        hookAutoIncrementMethodsApi15();
+        hookAutoDecide_update_api15();
     }
   }
 
@@ -142,7 +142,7 @@ public class XposedMod implements IXposedHookLoadPackage,
         });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      hookAutoIncrementMethodsApi21(lpparam.classLoader);
+      hookAutoDecide_all_api21(lpparam.classLoader);
     }
   }
 
@@ -164,7 +164,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(21)
-  private void hookAutoIncrementMethodsApi21(ClassLoader loader) {
+  private void hookAutoDecide_all_api21(ClassLoader loader) {
     Class<?> clazz = XposedHelpers.findClass(CLASS_BASESTATUSBAR, loader);
     XposedHelpers.findAndHookMethod(clazz, "updateNotification", StatusBarNotification.class,
         RankingMap.class, new XC_MethodHook() {
@@ -204,7 +204,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(18)
-  private void hookAutoIncrementMethodsApi18() {
+  private void hookAutoDecide_update_api18() {
     Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE, null);
     XposedHelpers.findAndHookMethod(clazz, "updateNotification", IBinder.class,
         StatusBarNotification.class, new XC_MethodHook() {
@@ -234,7 +234,7 @@ public class XposedMod implements IXposedHookLoadPackage,
         });
   }
 
-  private void hookAutoIncrementMethodsApi15() {
+  private void hookAutoDecide_update_api15() {
     Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE, null);
     Class<?> clazzSbn = XposedHelpers.findClass(CLASS_STATUSBARNOTIFICATION_API15, null);
 
