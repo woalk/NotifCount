@@ -26,15 +26,11 @@ Also feel free to open an issue on GitHub if you want.
 ### Origin of this module
 The original author of this Mod is *bbukowski* (https://github.com/bbukowski).
 This is a fork of https://github.com/bbukowski/NotifCount/ to keep developing, as the original author seems to have discontinued development (last commit mid 2014).
-I will create a pull request for the changes for a possible merge into the original repo, if the original developer would like to continue.
-*Info:* The last recent `master` state of the original repo is not functional on Lollipop devices, as it crashes in `InitZygote` due to a not found class.
-
-This fork had the first goal to fix this issue, to make this mod usable for Lollipop users.
+I created a pull request for the changes up to `v1.1.1-re` for a possible merge into the original repo, if the original developer would like to continue.
 
 ### Source information
 The original developer did not provide any licensing information.
 I assume that he is ok with forking his work.
-*bbukowski, please contact me if you don't want this to be online anymore.*
 
 For all my changes (everything except branch master), I apply the GNU General Public License v2.
 You can find a copy in this repo under `LICENSE`.
