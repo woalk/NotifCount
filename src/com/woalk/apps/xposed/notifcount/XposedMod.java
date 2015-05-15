@@ -272,6 +272,10 @@ public class XposedMod implements IXposedHookLoadPackage,
 
   private static void autoApplyNumber(Notification newNotif, Notification oldNotif,
       AppSetting setting) {
+    // If no settings could be found, apply default settings
+    if (setting == null)
+      setting = new AppSetting(null, AppSetting.SETTING_AUTO);
+
     if (newNotif.number != 0 || setting.getPreferredSetting() == AppSetting.SETTING_NONE)
       // Notification already has a number. Setting a number is not needed.
       return;
