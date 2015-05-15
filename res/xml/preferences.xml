@@ -36,6 +36,10 @@
             android:key="test_notif_wt_number"
             android:summary="@string/pref_test_notif_wt_number_summary"
             android:title="@string/pref_test_notif_wt_number_title" />
+        <Preference
+            android:key="test_notif_ws_number"
+            android:summary="@string/pref_test_notif_ws_number_summary"
+            android:title="@string/pref_test_notif_ws_number_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_info" >
         <Preference

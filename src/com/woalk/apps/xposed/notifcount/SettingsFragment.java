@@ -62,7 +62,17 @@ public class SettingsFragment extends PreferenceFragment implements
 
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        showTestTextNumberedNotification();
+        showTestTextNumberedNotification(false);
+        return true;
+      }
+    });
+
+    testNotif = findPreference("test_notif_ws_number");
+    testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        showTestTextNumberedNotification(true);
         return true;
       }
     });
@@ -127,7 +137,7 @@ public class SettingsFragment extends PreferenceFragment implements
     notificationManager.notify(0, n);
   }
 
-  private void showTestTextNumberedNotification() {
+  private void showTestTextNumberedNotification(boolean summaryTrue_titleFalse) {
     Intent resultIntent = new Intent(getActivity(), SettingsActivity.class);
 
     PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), 0,
@@ -136,19 +146,19 @@ public class SettingsFragment extends PreferenceFragment implements
 
     String content = getResources().getString(R.string.test_notification_text);
     int number = mRandom.nextInt(30);
+    
+    String numberString = String.format(getResources().getString(R.string.test_notification_only_text), number);
+    String appName = getResources().getString(R.string.app_name);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
         .setSmallIcon(R.drawable.ic_stat_notify)
-        .setContentTitle(getResources()
-            .getText(R.string.app_name))
+        .setContentTitle(summaryTrue_titleFalse ? appName : numberString)
         .setContentText(content)
         .setContentIntent(resultPendingIntent)
         .setAutoCancel(true)
         .setStyle(new NotificationCompat.BigTextStyle()
             .bigText(content)
-                .setSummaryText(
-                    String.format(getResources().getString(R.string.test_notification_only_text),
-                        number)));
+            .setSummaryText(summaryTrue_titleFalse ? numberString : appName));
 
     Notification n = builder.build();
 
