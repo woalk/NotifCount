@@ -33,6 +33,11 @@
     <string name="pref_test_notif_wt_number_summary">Creates a test notification without a number, but with the title containing the number.</string>
     <string name="pref_test_notif_ws_number_title">With number in summary</string>
     <string name="pref_test_notif_ws_number_summary">Creates a test notification without a number, but with a summary text containing the number.</string>
+    <string name="pref_clear_info_title">Clean App Update</string>
+    <string name="pref_clear_info_summary">Notification Count has been updated.
+        \nThis update introduces a new way of excluding apps and therefore saves other settings.
+        \n\nPlease note that all your settings up to this point will be lost and will be erased when cklicking \"OK\".
+        \nThis mainly helps saving storage space.</string>
     <string name="pref_version_number_title">Notification Count Version</string>
     <string name="pref_version_number_summary">Version %s
         \n\nBase module by Benjamin Bukowski,\nGitHub user bbukowski.

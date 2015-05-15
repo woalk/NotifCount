@@ -1,11 +1,13 @@
 
 package com.woalk.apps.xposed.notifcount;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -36,6 +38,23 @@ public class SettingsFragment extends PreferenceFragment implements
 
     getPreferenceManager().setSharedPreferencesMode(PreferenceActivity.MODE_WORLD_READABLE);
     addPreferencesFromResource(R.xml.preferences);
+
+    final SettingsHelper setH = new SettingsHelper(getActivity());
+    if (setH.getPreferenceVersion() < 2) {
+      new AlertDialog.Builder(getActivity())
+          .setTitle(R.string.pref_clear_info_title)
+          .setMessage(R.string.pref_clear_info_summary)
+          .setCancelable(false)
+          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              setH.clearLists();
+              setH.setPreferenceVersion(2);
+            }
+          })
+          .create()
+          .show();
+    }
 
     Preference testNotif = findPreference("test_notif_wo_number");
     testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

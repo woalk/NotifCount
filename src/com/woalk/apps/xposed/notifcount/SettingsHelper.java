@@ -21,6 +21,7 @@ public class SettingsHelper {
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
+  private static final String PREFERENCES_VERSION = "ver";
 
   private XSharedPreferences mXSharedPreferences;
   private SharedPreferences mSharedPreferences;
@@ -104,6 +105,26 @@ public class SettingsHelper {
     else if (mXSharedPreferences != null)
       number = Integer.valueOf(mXSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
     return number;
+  }
+
+  public int getPreferenceVersion() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number = mSharedPreferences.getInt(PREFERENCES_VERSION, 0);
+    return number;
+  }
+
+  public void setPreferenceVersion(int ver) {
+    if (mSharedPreferences != null) {
+      mSharedPreferences.edit().putInt(PREFERENCES_VERSION, ver).apply();
+    }
+  }
+
+  public void clearLists() {
+    mSharedPreferences.edit()
+        .remove(NOTIFICATION_FILTER_LIST)
+        .remove("apps_list_extract")
+        .apply();
   }
 
   public static class AppSetting {
