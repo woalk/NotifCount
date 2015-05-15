@@ -19,12 +19,15 @@ Also feel free to open an issue on GitHub if you want.
 
 ### Mod information
 This module currently has the following abilities:
-- Enable the Android-built-in functionality to add a number to notifications which provide Android a number, e.g. Messaging apps (like Telegram)
+1 - Enable the Android-built-in functionality to add a number to notifications which provide Android a number, e.g. Messaging apps (like Telegram)
 
-- Add such a number to selected apps that do not provide it by theirselves by increasing the number every time the notification gets updated.
-Apps that should get this 'workaround' (named `hookAutoIncrement...` in code) have to be selected excplicitly.
+2 - Automatically add numbers to apps that do not provide such quantity numbers to the system. The numbers are either fetched from the notification title, summary or by counting the times an app adds content to a notification.
+This is called `auto-decide` in code.
+It can be manually 'arranged' for specific apps, so that they use a user-specified method (or none) when causing problems.
 
-- Customize the appearance of the number - Change between opaque background, transparent background, or smaller number.
+*_Suggestions:_ Use "Title containing number" for Download Manager (com.android.providers.downloads) and either that or "Don't add number" for e.g. music players like Google Play Music. This solved two larger bugs with this feature.*
+
+3 - Customize the appearance of the number - Change between opaque background, transparent background, or smaller number.
 
 More features related to these functions may be added in the future.
 
