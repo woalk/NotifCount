@@ -342,7 +342,13 @@ public class XposedMod implements IXposedHookLoadPackage,
     if (setting == null)
       setting = new AppSetting(null, AppSetting.SETTING_AUTO);
 
-    if (newNotif.number != 0 || setting.getPreferredSetting() == AppSetting.SETTING_NONE)
+    if (setting.getPreferredSetting() == AppSetting.SETTING_NONE) {
+      // Remove notification number.
+      newNotif.number = 0;
+      return;
+    }
+
+    if (newNotif.number != 0 || setting.getPreferredSetting() == AppSetting.SETTING_STOCK)
       // Notification already has a number. Setting a number is not needed.
       return;
 
@@ -358,7 +364,8 @@ public class XposedMod implements IXposedHookLoadPackage,
         // If not found in the title, try to find in the summary.
         // If SETTING_TITLE is set, ignore checking for the summary.
         if (setting.getPreferredSetting() == AppSetting.SETTING_TITLE
-            || extractNumberFromSummery(newNotif))
+            || extractNumberFromSummery(newNotif)
+            || setting.getPreferredSetting() == AppSetting.SETTING_SHORTSUMMARY)
           return;
       } else
         return;

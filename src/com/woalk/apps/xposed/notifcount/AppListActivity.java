@@ -42,7 +42,7 @@ public class AppListActivity extends ListActivity {
     new LoadAppsInfoTask().execute();
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setTitle(R.string.pref_apps_increase_onupdate_title);
-    
+
     this.getListView().setFastScrollEnabled(true);
   }
 
