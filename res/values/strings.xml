@@ -11,7 +11,11 @@
     <string name="loading">Loading&#8230;</string>
     <string name="app_icon_cd">Application icon</string>
     <string name="pref_apps_increase_onupdate_title">Exception list</string>
-    <string name="pref_apps_increase_onupdate_textnumber">Extract number from notification</string>
+    <string name="pref_apps_increase_onupdate_auto">Automatic (default)</string>
+    <string name="pref_apps_increase_onupdate_titlenumber">Title containing number</string>
+    <string name="pref_apps_increase_onupdate_summarynumber">Summary containing number</string>
+    <string name="pref_apps_increase_onupdate_stocknumber">Don\'t add number</string>
+    <string name="pref_apps_increase_onupdate_nonumber">Don\'t show any number</string>
     <string name="pref_apps_increase_onupdate_count">Count updates</string>
     <string name="pref_apps_increase_onupdate_summary">Force specific apps to use a specific method to retrieve the notification number (or to not use a number at all).</string>
     <string name="pref_appear_number_size">Number Appearance</string>

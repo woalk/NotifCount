@@ -1,11 +1,14 @@
 
 package com.woalk.apps.xposed.notifcount;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,12 +17,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,8 +154,8 @@ public class AppListActivity extends ListActivity {
       TextView value;
       LinearLayout itemlayout;
       RadioGroup radioG;
-      RadioButton radio0;
-      RadioButton radio1;
+      RadioButton radio3;
+      RadioButton radio4;
     }
 
     @Override
@@ -167,8 +173,8 @@ public class AppListActivity extends ListActivity {
         holder.value = (TextView) view.findViewById(R.id.value);
         holder.itemlayout = (LinearLayout) view.findViewById(R.id.itemlayout);
         holder.radioG = (RadioGroup) view.findViewById(R.id.radioG);
-        holder.radio0 = (RadioButton) view.findViewById(R.id.radio0);
-        holder.radio1 = (RadioButton) view.findViewById(R.id.radio1);
+        holder.radio3 = (RadioButton) view.findViewById(R.id.radio3);
+        holder.radio4 = (RadioButton) view.findViewById(R.id.radio4);
         view.setTag(holder);
       } else {
         view = convertView;
@@ -181,30 +187,132 @@ public class AppListActivity extends ListActivity {
       holder.icon.setImageDrawable(item.icon);
 
       holder.value.setText(item.app.toShortString());
+      if (item.app.getPreferredSetting() != AppSetting.SETTING_AUTO)
+        holder.value.setTypeface(Typeface.DEFAULT_BOLD);
+      else
+        holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 
       holder.itemlayout.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           int vis = holder.radioG.getVisibility();
-          holder.radioG.setVisibility(vis == View.GONE ? View.VISIBLE : View.GONE);
+          if (vis == View.GONE) {
+            holder.radioG.setVisibility(View.VISIBLE);
+
+            final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            final int heightSpec = View.MeasureSpec
+                .makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            holder.radioG.measure(widthSpec, heightSpec);
+            ValueAnimator mAnimator = slideAnimator(0, holder.radioG.getMeasuredHeight(),
+                holder.radioG);
+            mAnimator.setInterpolator(new DecelerateInterpolator());
+            mAnimator.start();
+          } else {
+            int finalHeight = holder.radioG.getHeight();
+            ValueAnimator mAnimator = slideAnimator(finalHeight, 0, holder.radioG);
+            mAnimator.addListener(new Animator.AnimatorListener() {
+              @Override
+              public void onAnimationStart(Animator animation) {
+              }
+
+              @Override
+              public void onAnimationEnd(Animator animator) {
+                // Height=0, but it set visibility to GONE
+                holder.radioG.setVisibility(View.GONE);
+              }
+
+              @Override
+              public void onAnimationCancel(Animator animation) {
+              }
+
+              @Override
+              public void onAnimationRepeat(Animator animation) {
+              }
+            });
+            mAnimator.setInterpolator(new DecelerateInterpolator());
+            mAnimator.start();
+          }
         }
       });
 
-      View.OnClickListener radioClick = new View.OnClickListener() {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+        holder.radio3.setVisibility(View.GONE);
+        holder.radio4.setVisibility(View.GONE);
+      }
+
+      holder.radioG.setOnCheckedChangeListener(null);
+
+      int checkedRadio = R.id.radio0;
+      switch (item.app.getPreferredSetting()) {
+        case AppSetting.SETTING_NONE:
+          checkedRadio = R.id.radio1;
+          break;
+        case AppSetting.SETTING_STOCK:
+          checkedRadio = R.id.radio2;
+          break;
+        case AppSetting.SETTING_TITLE:
+          checkedRadio = R.id.radio3;
+          break;
+        case AppSetting.SETTING_SHORTSUMMARY:
+          checkedRadio = R.id.radio4;
+          break;
+        case AppSetting.SETTING_COUNTUPDATES:
+          checkedRadio = R.id.radio5;
+          break;
+      }
+      holder.radioG.check(checkedRadio);
+
+      holder.radioG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
         @Override
-        public void onClick(View v) {
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+          switch (checkedId) {
+            case R.id.radio0:
+              item.app.setPreferredSetting(AppSetting.SETTING_AUTO);
+              holder.value.setText(item.app.toShortString());
+              holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+              mSettingsHelper.removeListItem(item.app.getPackageName());
+              return;
+            case R.id.radio1:
+              item.app.setPreferredSetting(AppSetting.SETTING_NONE);
+              break;
+            case R.id.radio2:
+              item.app.setPreferredSetting(AppSetting.SETTING_STOCK);
+              break;
+            case R.id.radio3:
+              item.app.setPreferredSetting(AppSetting.SETTING_TITLE);
+              break;
+            case R.id.radio4:
+              item.app.setPreferredSetting(AppSetting.SETTING_SHORTSUMMARY);
+              break;
+            case R.id.radio5:
+              item.app.setPreferredSetting(AppSetting.SETTING_COUNTUPDATES);
+              break;
+          }
+          mSettingsHelper.alterListItem(item.app);
           holder.value.setText(item.app.toShortString());
+          holder.value.setTypeface(Typeface.DEFAULT_BOLD);
         }
-      };
-      holder.radio0.setOnClickListener(radioClick);
-      holder.radio1.setOnClickListener(radioClick);
-
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-        holder.radio0.setVisibility(View.GONE);
-
-
+      });
 
       return view;
+    }
+
+    private ValueAnimator slideAnimator(int start, int end, final RadioGroup rg) {
+      ValueAnimator animator = ValueAnimator.ofInt(start, end);
+      animator.setDuration(this.getContext().getResources()
+          .getInteger(android.R.integer.config_shortAnimTime));
+      animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+          // Update Height
+          int value = (Integer) valueAnimator.getAnimatedValue();
+          LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) rg.getLayoutParams();
+          layoutParams.height = value;
+          rg.setLayoutParams(layoutParams);
+        }
+      });
+      return animator;
     }
   }
 }
