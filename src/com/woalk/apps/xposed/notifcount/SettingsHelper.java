@@ -120,6 +120,10 @@ public class SettingsHelper {
     }
   }
 
+  public List<String> getCachedList() {
+    return mListItems;
+  }
+
   public void clearLists() {
     mSharedPreferences.edit()
         .remove(NOTIFICATION_FILTER_LIST)

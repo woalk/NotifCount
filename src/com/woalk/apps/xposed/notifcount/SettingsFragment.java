@@ -41,19 +41,23 @@ public class SettingsFragment extends PreferenceFragment implements
 
     final SettingsHelper setH = new SettingsHelper(getActivity());
     if (setH.getPreferenceVersion() < 2) {
-      new AlertDialog.Builder(getActivity())
-          .setTitle(R.string.pref_clear_info_title)
-          .setMessage(R.string.pref_clear_info_summary)
-          .setCancelable(false)
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              setH.clearLists();
-              setH.setPreferenceVersion(2);
-            }
-          })
-          .create()
-          .show();
+      if (setH.getCachedList().size() > 0) {
+        new AlertDialog.Builder(getActivity())
+            .setTitle(R.string.pref_clear_info_title)
+            .setMessage(R.string.pref_clear_info_summary)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                setH.clearLists();
+                setH.setPreferenceVersion(2);
+              }
+            })
+            .create()
+            .show();
+      } else {
+        setH.setPreferenceVersion(2);
+      }
     }
 
     Preference testNotif = findPreference("test_notif_wo_number");
