@@ -17,11 +17,12 @@ import android.os.IBinder;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
 
+import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
+
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -38,6 +39,8 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String CLASS_STATUSBARICON = "com.android.internal.statusbar.StatusBarIcon";
   private static final String CLASS_STATUSBARMANAGERSERVICE = "com.android.server.StatusBarManagerService";
   private static final String CLASS_BASESTATUSBAR = PKG_SYSTEMUI + ".statusbar.BaseStatusBar";
+  private static final String CLASS_PHONESTATUSBAR = PKG_SYSTEMUI
+      + ".statusbar.phone.PhoneStatusBar";
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
 
   private static SettingsHelper mSettingsHelper;
@@ -59,9 +62,9 @@ public class XposedMod implements IXposedHookLoadPackage,
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-        hookAutoIncrementMethodsApi18();
+        hookAutoDecide_update_api18();
       else
-        hookAutoIncrementMethodsApi15();
+        hookAutoDecide_update_api15();
     }
   }
 
@@ -141,7 +144,11 @@ public class XposedMod implements IXposedHookLoadPackage,
         });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      hookAutoIncrementMethodsApi21(lpparam.classLoader);
+      hookAutoDecide_all_api21(lpparam.classLoader);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      hookAutoDecide_new_api18(lpparam.classLoader);
+    } else {
+      hookAutoDecide_new_api15(lpparam.classLoader);
     }
   }
 
@@ -163,7 +170,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(21)
-  private void hookAutoIncrementMethodsApi21(ClassLoader loader) {
+  private void hookAutoDecide_all_api21(ClassLoader loader) {
     Class<?> clazz = XposedHelpers.findClass(CLASS_BASESTATUSBAR, loader);
     XposedHelpers.findAndHookMethod(clazz, "updateNotification", StatusBarNotification.class,
         RankingMap.class, new XC_MethodHook() {
@@ -171,51 +178,51 @@ public class XposedMod implements IXposedHookLoadPackage,
           @Override
           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             StatusBarNotification sbn = (StatusBarNotification) param.args[0];
-            if (sbn.getNotification().number == 0) {
-              mSettingsHelper.reload();
-              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
-              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
-              if (isListed && !isExtract) {
-                Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
-                    "mNotificationData");
-                Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
-                    "mHeadsUpNotificationView");
 
-                final String key = sbn.getKey();
-                boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
-                    "isHeadsUp", key);
-                Object oldEntry;
-                if (wasHeadsUp) {
-                  oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
-                } else {
-                  oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
-                }
-                if (oldEntry == null) {
-                  return;
-                }
+            Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
+                "mNotificationData");
+            Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
+                "mHeadsUpNotificationView");
 
-                final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
-                    .getObjectField(oldEntry, "notification");
-                if (oldSbn.getNotification().number == 0) {
-                  sbn.getNotification().number = 2;
-                } else {
-                  sbn.getNotification().number = oldSbn.getNotification().number + 1;
-                }
-              } else if (isListed && isExtract) {
-                try {
-                  extractNumber(sbn.getNotification());
-                } catch (Exception e) {
-                  XposedBridge.log("Notification did not provide extractable number. Info: "
-                      + sbn.toString());
-                }
-              }
+            final String key = sbn.getKey();
+            boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
+                "isHeadsUp", key);
+            Object oldEntry;
+            if (wasHeadsUp) {
+              oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
+            } else {
+              oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
             }
+            if (oldEntry == null) {
+              return;
+            }
+
+            final StatusBarNotification oldSbn = (StatusBarNotification) XposedHelpers
+                .getObjectField(oldEntry, "notification");
+
+            mSettingsHelper.reload();
+
+            autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                mSettingsHelper.getSetting(sbn.getPackageName()));
+          }
+        });
+    Class<?> clazz2 = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    XposedHelpers.findAndHookMethod(clazz2, "addNotification", StatusBarNotification.class,
+        RankingMap.class, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            StatusBarNotification sbn = (StatusBarNotification) param.args[0];
+            mSettingsHelper.reload();
+
+            autoApplyNumber(sbn.getNotification(),
+                mSettingsHelper.getSetting(sbn.getPackageName()));
           }
         });
   }
 
   @TargetApi(18)
-  private void hookAutoIncrementMethodsApi18() {
+  private void hookAutoDecide_update_api18() {
     Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE, null);
     XposedHelpers.findAndHookMethod(clazz, "updateNotification", IBinder.class,
         StatusBarNotification.class, new XC_MethodHook() {
@@ -226,41 +233,42 @@ public class XposedMod implements IXposedHookLoadPackage,
             IBinder key = (IBinder) param.args[0];
             StatusBarNotification sbn = (StatusBarNotification) param.args[1];
 
-            if (sbn.getNotification().number == 0) {
-              mSettingsHelper.reload();
-              boolean isListed = mSettingsHelper.isListed(sbn.getPackageName());
-              boolean isExtract = mSettingsHelper.isListedExtract(sbn.getPackageName());
-              if (isListed && !isExtract) {
-                HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
-                    .getObjectField(param.thisObject, "mNotifications");
+            HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
+                .getObjectField(param.thisObject, "mNotifications");
 
-                if (mNotifications.containsKey(key)) {
-                  StatusBarNotification oldSbn = mNotifications.get(key);
-                  if (oldSbn.getNotification().number == 0) {
-                    sbn.getNotification().number = 2;
-                  } else {
-                    sbn.getNotification().number = oldSbn.getNotification().number + 1;
-                  }
-                }
-              } else if (isListed && isExtract) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                  try {
-                    extractNumber(sbn.getNotification());
-                  } catch (Exception e) {
-                    XposedBridge.log("Notification did not provide extractable number. Info: "
-                        + sbn.toString());
-                  }
-                } else {
-                  XposedBridge
-                      .log("Sorry, notification number extracting is not supported on versions lower than KITKAT.");
-                }
-              }
+            mSettingsHelper.reload();
+
+            if (mNotifications.containsKey(key)) {
+              StatusBarNotification oldSbn = mNotifications.get(key);
+              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                  mSettingsHelper.getSetting(sbn.getPackageName()));
+            } else {
+              autoApplyNumber(sbn.getNotification(),
+                  mSettingsHelper.getSetting(sbn.getPackageName()));
             }
           }
         });
   }
 
-  private void hookAutoIncrementMethodsApi15() {
+  @TargetApi(18)
+  private void hookAutoDecide_new_api18(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    XposedHelpers.findAndHookMethod(clazz, "addNotification", IBinder.class,
+        StatusBarNotification.class, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            StatusBarNotification sbn = (StatusBarNotification) param.args[1];
+
+            mSettingsHelper.reload();
+
+            autoApplyNumber(sbn.getNotification(),
+                mSettingsHelper.getSetting(sbn.getPackageName()));
+          }
+        });
+  }
+
+  private void hookAutoDecide_update_api15() {
     Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE, null);
     Class<?> clazzSbn = XposedHelpers.findClass(CLASS_STATUSBARNOTIFICATION_API15, null);
 
@@ -275,47 +283,139 @@ public class XposedMod implements IXposedHookLoadPackage,
 
             Notification notification = (Notification) XposedHelpers.getObjectField(
                 sbn, "notification");
-            if (notification.number == 0) {
-              String pkg = (String) XposedHelpers.getObjectField(
-                  sbn, "pkg");
-              mSettingsHelper.reload();
-              if (mSettingsHelper.isListed(pkg)) {
-                HashMap<IBinder, ?> mNotifications = (HashMap<IBinder, ?>) XposedHelpers
-                    .getObjectField(param.thisObject, "mNotifications");
 
-                if (mNotifications.containsKey(key)) {
-                  Object oldSbn = mNotifications.get(key);
-                  Notification oldNotification = (Notification) XposedHelpers
-                      .getObjectField(oldSbn, "notification");
-                  if (oldNotification.number == 0) {
-                    notification.number = 2;
-                  } else {
-                    notification.number = oldNotification.number + 1;
-                  }
-                }
-              }
+            String pkg = (String) XposedHelpers.getObjectField(
+                sbn, "pkg");
+            HashMap<IBinder, ?> mNotifications = (HashMap<IBinder, ?>) XposedHelpers
+                .getObjectField(param.thisObject, "mNotifications");
+
+            mSettingsHelper.reload();
+
+            if (mNotifications.containsKey(key)) {
+              Object oldSbn = mNotifications.get(key);
+              Notification oldNotification = (Notification) XposedHelpers
+                  .getObjectField(oldSbn, "notification");
+              autoApplyNumber(notification, oldNotification, mSettingsHelper.getSetting(pkg));
+            } else {
+              autoApplyNumber(notification, mSettingsHelper.getSetting(pkg));
             }
           }
         });
   }
 
+  private void hookAutoDecide_new_api15(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    Class<?> clazzSbn = XposedHelpers.findClass(CLASS_STATUSBARNOTIFICATION_API15, null);
+
+    XposedHelpers.findAndHookMethod(clazz, "addNotification", IBinder.class,
+        clazzSbn, new XC_MethodHook() {
+
+          @Override
+          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            Object sbn = param.args[1];
+
+            Notification notification = (Notification) XposedHelpers.getObjectField(
+                sbn, "notification");
+            if (notification.number == 0) {
+              String pkg = (String) XposedHelpers.getObjectField(
+                  sbn, "pkg");
+
+              mSettingsHelper.reload();
+
+              autoApplyNumber(notification, mSettingsHelper.getSetting(pkg));
+            }
+          }
+        });
+  }
+
+  private static void autoApplyNumber(Notification newNotif, Notification oldNotif,
+      AppSetting setting) {
+    // If no settings could be found, apply default settings
+    if (setting == null)
+      setting = new AppSetting(null, AppSetting.SETTING_AUTO);
+
+    if (setting.getPreferredSetting() == AppSetting.SETTING_NONE) {
+      // Remove notification number.
+      newNotif.number = 0;
+      return;
+    }
+
+    if (newNotif.number != 0 || setting.getPreferredSetting() == AppSetting.SETTING_STOCK)
+      // Notification already has a number. Setting a number is not needed.
+      return;
+
+    // This only works on KitKat or higher.
+    // Also, ignore this if the app should only count updates.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        && setting.getPreferredSetting() != AppSetting.SETTING_COUNTUPDATES) {
+      // Try to find a number in the title.
+      // If SETTING_SHORTSUMMARY is set, jump directly to checking the summary
+      // (ignore title).
+      if (setting.getPreferredSetting() == AppSetting.SETTING_SHORTSUMMARY
+          || !extractNumberFromTitle(newNotif)) {
+        // If not found in the title, try to find in the summary.
+        // If SETTING_TITLE is set, ignore checking for the summary.
+        if (setting.getPreferredSetting() == AppSetting.SETTING_TITLE
+            || extractNumberFromSummery(newNotif)
+            || setting.getPreferredSetting() == AppSetting.SETTING_SHORTSUMMARY)
+          return;
+      } else
+        return;
+    }
+
+    if (oldNotif != null) {
+      // Everything before did not work, auto-increase on update.
+      if (oldNotif.number == 0)
+        newNotif.number = 2;
+      else
+        newNotif.number = oldNotif.number + 1;
+    }
+  }
+
+  private static void autoApplyNumber(Notification notif, AppSetting setting) {
+    autoApplyNumber(notif, null, setting);
+  }
+
   @TargetApi(19)
-  private static void extractNumber(Notification notification) throws NumberFormatException {
+  private static boolean extractNumberFromTitle(Notification notification) {
+    String notification_text = notification.extras
+        .getString(Notification.EXTRA_TITLE);
+    if (notification_text != null) {
+      int i = findFirstIntegerInString(notification_text);
+      if (i == 0)
+        return false;
+      else {
+        notification.number = i;
+        return true;
+      }
+    } else
+      return false;
+  }
+
+  @TargetApi(19)
+  private static boolean extractNumberFromSummery(Notification notification) {
     String notification_text = notification.extras
         .getString(Notification.EXTRA_SUMMARY_TEXT);
     if (notification_text != null) {
       int i = findFirstIntegerInString(notification_text);
-      notification.number = i;
-    }
+      if (i == 0)
+        return false;
+      else {
+        notification.number = i;
+        return true;
+      }
+    } else
+      return false;
   }
 
-  private static int findFirstIntegerInString(String str) throws NumberFormatException {
+  private static int findFirstIntegerInString(String str) {
     int i = 0;
-    while (!Character.isDigit(str.charAt(i)))
+    while (i < (str.length() - 1) && !Character.isDigit(str.charAt(i)))
       i++;
     int j = i;
-    while (Character.isDigit(str.charAt(j)))
+    while (j < (str.length() - 1) && Character.isDigit(str.charAt(j)))
       j++;
-    return Integer.parseInt(str.substring(i, j));
+    String intstr = str.substring(i, j);
+    return !intstr.equals("") ? Integer.parseInt(intstr) : 0;
   }
 }

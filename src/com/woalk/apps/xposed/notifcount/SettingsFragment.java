@@ -1,11 +1,13 @@
 
 package com.woalk.apps.xposed.notifcount;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -37,6 +39,27 @@ public class SettingsFragment extends PreferenceFragment implements
     getPreferenceManager().setSharedPreferencesMode(PreferenceActivity.MODE_WORLD_READABLE);
     addPreferencesFromResource(R.xml.preferences);
 
+    final SettingsHelper setH = new SettingsHelper(getActivity());
+    if (setH.getPreferenceVersion() < 2) {
+      if (setH.getCachedList().size() > 0) {
+        new AlertDialog.Builder(getActivity())
+            .setTitle(R.string.pref_clear_info_title)
+            .setMessage(R.string.pref_clear_info_summary)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                setH.clearLists();
+                setH.setPreferenceVersion(2);
+              }
+            })
+            .create()
+            .show();
+      } else {
+        setH.setPreferenceVersion(2);
+      }
+    }
+
     Preference testNotif = findPreference("test_notif_wo_number");
     testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -62,7 +85,17 @@ public class SettingsFragment extends PreferenceFragment implements
 
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        showTestTextNumberedNotification();
+        showTestTextNumberedNotification(false);
+        return true;
+      }
+    });
+
+    testNotif = findPreference("test_notif_ws_number");
+    testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        showTestTextNumberedNotification(true);
         return true;
       }
     });
@@ -130,7 +163,7 @@ public class SettingsFragment extends PreferenceFragment implements
     notificationManager.notify(0, n);
   }
 
-  private void showTestTextNumberedNotification() {
+  private void showTestTextNumberedNotification(boolean summaryTrue_titleFalse) {
     Intent resultIntent = new Intent(getActivity(), SettingsActivity.class);
 
     PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), 0,
@@ -139,19 +172,19 @@ public class SettingsFragment extends PreferenceFragment implements
 
     String content = getResources().getString(R.string.test_notification_text);
     int number = mRandom.nextInt(30);
+    
+    String numberString = String.format(getResources().getString(R.string.test_notification_only_text), number);
+    String appName = getResources().getString(R.string.app_name);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
         .setSmallIcon(R.drawable.ic_stat_notify)
-        .setContentTitle(getResources()
-            .getText(R.string.app_name))
+        .setContentTitle(summaryTrue_titleFalse ? appName : numberString)
         .setContentText(content)
         .setContentIntent(resultPendingIntent)
         .setAutoCancel(true)
         .setStyle(new NotificationCompat.BigTextStyle()
             .bigText(content)
-                .setSummaryText(
-                    String.format(getResources().getString(R.string.test_notification_only_text),
-                        number)));
+            .setSummaryText(summaryTrue_titleFalse ? numberString : appName));
 
     Notification n = builder.build();
 

@@ -62,15 +62,21 @@
             android:layout_weight="0"
             android:background="@android:color/darker_gray" />
 
-        <CheckBox
-            android:id="@+id/checkbox"
+        <TextView
+            android:id="@+id/value"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="2dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="2dp"
             android:layout_marginStart="6dp"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            android:textColor="#009688"
+            android:textSize="21sp" />
 
     </LinearLayout>
 
@@ -87,10 +93,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/pref_apps_increase_onupdate_textnumber" />
+            android:text="@string/pref_apps_increase_onupdate_auto" />
 
         <RadioButton
             android:id="@+id/radio1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_apps_increase_onupdate_nonumber" />
+
+        <RadioButton
+            android:id="@+id/radio2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_apps_increase_onupdate_stocknumber" />
+
+        <RadioButton
+            android:id="@+id/radio3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_apps_increase_onupdate_titlenumber" />
+
+        <RadioButton
+            android:id="@+id/radio4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_apps_increase_onupdate_summarynumber" />
+
+        <RadioButton
+            android:id="@+id/radio5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pref_apps_increase_onupdate_count" />
