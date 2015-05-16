@@ -1,4 +1,4 @@
-# Notification Count
+# Notification Count [![Build Status](https://travis-ci.org/woalk/NotifCount.svg?branch=woalk/master)](https://travis-ci.org/woalk/NotifCount)
 ## Android Xposed Module for adding a number to notification icons (e.g. Message count)
 
 ### Mod information
