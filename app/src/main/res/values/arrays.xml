@@ -6,7 +6,7 @@
         <item>@string/pref_appear_number_size_2</item>
         <item>@string/pref_appear_number_size_default</item>
     </string-array>
-    <string-array name="pref_appear_number_size_value_list">
+    <string-array name="pref_appear_number_size_value_list" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
