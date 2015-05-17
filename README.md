@@ -35,6 +35,8 @@ I assume that he is ok with forking his work.
 For all my changes (everything except branch master), I apply the GNU General Public License v2.
 You can find a copy in this repo under `LICENSE`.
 
+This project uses the library [android-colorpicker](https://github.com/woalk/android-colorpicker).
+
 ```
 Branch `master`:
 (C) 2014 Benjamin Bukowski
@@ -45,4 +47,9 @@ Branch `woalk/master` and other `woalk/*` branches:
 (C) 2015 Woalk       woalk.com
          GitHub user github.com/woalk
 Licensed under GNU General Public License v2.
+
+Submodule `libs/android-colorpicker`:
+(C) 2013 The Android Open Source Project
+    2015 Woalk       woalk.com
+Licensed under Apache License v2.0.
 ```
