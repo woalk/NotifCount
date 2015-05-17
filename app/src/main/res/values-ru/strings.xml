@@ -9,7 +9,14 @@
     <string name="test_notification_only_text">%d мой номер!</string>
     <string name="loading">Загрузка…</string>
     <string name="app_icon_cd">Иконка приложения</string>
-
+    <string name="pref_apps_increase_onupdate_title">Список исключений</string>
+    <string name="pref_apps_increase_onupdate_auto">Автоматически (по умолчанию)</string>
+    <string name="pref_apps_increase_onupdate_titlenumber">Название содержащие номер</string>
+    <string name="pref_apps_increase_onupdate_summarynumber">Основное содержащие номер</string>
+    <string name="pref_apps_increase_onupdate_stocknumber">Не добавлять номер</string>
+    <string name="pref_apps_increase_onupdate_nonumber">"Не показывать любое число"</string>
+    <string name="pref_apps_increase_onupdate_count">Считать обновления</string>
+    <string name="pref_apps_increase_onupdate_summary">Заставить конкретные приложения использовать конкретный метод для получения числа уведомлений (или не использовать число вообще).</string>
     <string name="pref_appear_number_size">Внешний вид цифр</string>
     <string name="pref_appear_number_size_0">Непрозрачный (по умолчанию)</string>
     <string name="pref_appear_number_size_1">Прозрачный</string>
@@ -21,16 +28,18 @@
     <string name="pref_test_notif_w_number_title">С номером</string>
     <string name="pref_test_notif_w_number_summary">Создает тестовое уведомления со случайным номером.</string>
     <string name="pref_test_notif_wo_number_title">Без номера</string>
-    <string name="pref_test_notif_wo_number_summary">"Создаёт тестового уведомления без номера.
- 
-Примечание:
-Показывает накладку с номером только, если это приложение помечено “Считать уведомления” в белом списоке выше."</string>
-    <string name="pref_test_notif_wt_number_title">Число только текстом</string>
-    <string name="pref_test_notif_wt_number_summary">"Создает уведомления без номера, но содержет номер в тексте.
- 
-Примечание:
-Показывает накладку с номером только, если это приложение помечено “Извлекать номер из уведомления” в белом списоке выше."</string>
-    <string name="pref_version_number_title">"Notification Count(Счётчик уведомлений)"</string>
+    <string name="pref_test_notif_wo_number_summary">Создаёт тестового уведомления без номера.</string>
+    <string name="pref_test_notif_wt_number_title">С номером в названии</string>
+    <string name="pref_test_notif_wt_number_summary">Создает тестового уведомления без номера, но с названием, содержащим номер.</string>
+    <string name="pref_test_notif_ws_number_title">С номером в заключении</string>
+    <string name="pref_test_notif_ws_number_summary">Создает тестового уведомления без номера, но с числом в заключении текста.</string>
+    <string name="pref_clear_info_title">Очистить Обновление приложения</string>
+    <string name="pref_clear_info_summary">"Notification Count был обновлен.
+Это обновление вводит новый способ подсчёта уведомлений приложений и естественно, сохраняет другие параметры.
+
+Пожалуйста, обратите внимание, что все ваши настройки до этой точки будут потеряны, и будут удалены при нажатии \"ОК\".
+В основном это помогает экономить дисковое пространство."</string>
+    <string name="pref_version_number_title">Notification Count(Счётчик уведомлений)</string>
     <string name="pref_version_number_summary">"Версия %s 
 
 Базовый модуль от Benjamin Bukowski,
