@@ -8,6 +8,12 @@
             android:title="@string/pref_apps_increase_onupdate_title" >
             <intent android:action="com.woalk.apps.xposed.notifcount.WHITELIST" />
         </Preference>
+        <CheckBoxPreference
+            android:key="default_increase_onupdate"
+            android:summaryOn="@string/pref_apps_default_increase_onupdate_summary_on"
+            android:summaryOff="@string/pref_apps_default_increase_onupdate_summary_off"
+            android:title="@string/pref_apps_default_increase_onupdate_title"
+            android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_appearance" >
         <ListPreference

@@ -18,6 +18,9 @@
     <string name="pref_apps_increase_onupdate_nonumber">Don\'t show any number</string>
     <string name="pref_apps_increase_onupdate_count">Count updates</string>
     <string name="pref_apps_increase_onupdate_summary">Force specific apps to use a specific method to retrieve the notification number (or to not use a number at all).</string>
+    <string name="pref_apps_default_increase_onupdate_title">Use whitelist</string>
+    <string name="pref_apps_default_increase_onupdate_summary_on">Current setting: Whitelist. Apps needing adding of notification number have to be explicitly specified.</string>
+    <string name="pref_apps_default_increase_onupdate_summary_off">Current setting: Blacklist. Notification Count will try to add a number to every notification, wrongly behaving apps have to be excluded explicitly.</string>
     <string name="pref_appear_number_size">Number Appearance</string>
     <string name="pref_appear_number_size_0">Opaque (default)</string>
     <string name="pref_appear_number_size_1">Transparent</string>

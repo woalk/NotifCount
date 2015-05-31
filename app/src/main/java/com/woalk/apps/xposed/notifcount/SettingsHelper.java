@@ -20,6 +20,7 @@ public class SettingsHelper {
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
+  private static final String NOTIFICATION_USE_WHITELIST = "default_increase_onupdate";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
   private static final String PREFERENCES_VERSION = "ver";
 
@@ -96,6 +97,15 @@ public class SettingsHelper {
     String pref = mListItems.get(listedI);
     int i = pref.indexOf("==");
     return new AppSetting(pref.substring(0, i), Integer.valueOf(pref.substring(i + 2)));
+  }
+
+  public boolean isWhitelist() {
+    boolean bool = false;
+    if (mSharedPreferences != null)
+      bool = mSharedPreferences.getBoolean(NOTIFICATION_USE_WHITELIST, false);
+    else if (mXSharedPreferences != null)
+      bool = mXSharedPreferences.getBoolean(NOTIFICATION_USE_WHITELIST, false);
+    return bool;
   }
 
   public int getNumberSize() {
