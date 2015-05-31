@@ -25,8 +25,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -244,19 +242,19 @@ public class AppListActivity extends ListActivity {
 
       int checkedRadio = R.id.radio0;
       switch (item.app.getPreferredSetting()) {
-        case AppSetting.SETTING_NONE:
+        case SettingsHelper.AppSetting.SETTING_NONE:
           checkedRadio = R.id.radio1;
           break;
-        case AppSetting.SETTING_STOCK:
+        case SettingsHelper.AppSetting.SETTING_STOCK:
           checkedRadio = R.id.radio2;
           break;
-        case AppSetting.SETTING_TITLE:
+        case SettingsHelper.AppSetting.SETTING_TITLE:
           checkedRadio = R.id.radio3;
           break;
-        case AppSetting.SETTING_SHORTSUMMARY:
+        case SettingsHelper.AppSetting.SETTING_SHORTSUMMARY:
           checkedRadio = R.id.radio4;
           break;
-        case AppSetting.SETTING_COUNTUPDATES:
+        case SettingsHelper.AppSetting.SETTING_COUNTUPDATES:
           checkedRadio = R.id.radio5;
           break;
       }
@@ -268,25 +266,25 @@ public class AppListActivity extends ListActivity {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
           switch (checkedId) {
             case R.id.radio0:
-              item.app.setPreferredSetting(AppSetting.SETTING_AUTO);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_AUTO);
               holder.value.setText(item.app.toShortString());
               holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
               mSettingsHelper.removeListItem(item.app.getPackageName());
               return;
             case R.id.radio1:
-              item.app.setPreferredSetting(AppSetting.SETTING_NONE);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_NONE);
               break;
             case R.id.radio2:
-              item.app.setPreferredSetting(AppSetting.SETTING_STOCK);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_STOCK);
               break;
             case R.id.radio3:
-              item.app.setPreferredSetting(AppSetting.SETTING_TITLE);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_TITLE);
               break;
             case R.id.radio4:
-              item.app.setPreferredSetting(AppSetting.SETTING_SHORTSUMMARY);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_SHORTSUMMARY);
               break;
             case R.id.radio5:
-              item.app.setPreferredSetting(AppSetting.SETTING_COUNTUPDATES);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_COUNTUPDATES);
               break;
           }
           mSettingsHelper.alterListItem(item.app);
