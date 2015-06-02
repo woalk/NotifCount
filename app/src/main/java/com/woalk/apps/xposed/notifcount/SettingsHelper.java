@@ -4,6 +4,7 @@ package com.woalk.apps.xposed.notifcount;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 
 import de.robv.android.xposed.XSharedPreferences;
 
@@ -21,6 +22,9 @@ public class SettingsHelper {
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
+  private static final String NOTIFICATION_NUMBER_BADGE_COLOR = "number_badge_color";
+  private static final String NOTIFICATION_NUMBER_COLOR = "number_color";
+  private static final String NOTIFICATION_NUMBER_BADGE_BORDER_COLOR = "number_badge_border_color";
   private static final String PREFERENCES_VERSION = "ver";
 
   private XSharedPreferences mXSharedPreferences;
@@ -104,6 +108,33 @@ public class SettingsHelper {
       number = Integer.valueOf(mSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
     else if (mXSharedPreferences != null)
       number = Integer.valueOf(mXSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
+    return number;
+  }
+
+  public int getBadgeColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_COLOR, Color.WHITE);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_COLOR, Color.WHITE);
+    return number;
+  }
+
+  public int getNumberColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_COLOR, Color.BLACK);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_COLOR, Color.BLACK);
+    return number;
+  }
+
+  public int getBadgeBorderColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
     return number;
   }
 

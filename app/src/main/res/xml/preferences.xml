@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:woalk="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/settings_increment_on_update" >
         <Preference
@@ -17,6 +18,33 @@
             android:entries="@array/pref_appear_number_size_list"
             android:entryValues="@array/pref_appear_number_size_value_list"
             android:defaultValue="0" />
+        <com.woalk.apps.lib.colorpicker.ColorPreference
+            android:key="number_badge_color"
+            android:title="@string/pref_appear_number_badge_color_title"
+            android:summary="@string/pref_appear_number_badge_color_summary"
+            woalk:allowCustomColor="true"
+            woalk:colors="@array/colors"
+            woalk:dialogTitle="@string/pref_appear_number_badge_color_title"
+            woalk:columns="4"
+            android:defaultValue="@color/colors_white" />
+        <com.woalk.apps.lib.colorpicker.ColorPreference
+            android:key="number_color"
+            android:title="@string/pref_appear_number_color_title"
+            android:summary="@string/pref_appear_number_color_summary"
+            woalk:allowCustomColor="true"
+            woalk:colors="@array/colors"
+            woalk:dialogTitle="@string/pref_appear_number_color_title"
+            woalk:columns="4"
+            android:defaultValue="@color/colors_black" />
+        <com.woalk.apps.lib.colorpicker.ColorPreference
+            android:key="number_badge_border_color"
+            android:title="@string/pref_appear_number_badge_border_color_title"
+            android:summary="@string/pref_appear_number_badge_border_color_summary"
+            woalk:allowCustomColor="true"
+            woalk:colors="@array/colors"
+            woalk:dialogTitle="@string/pref_appear_number_badge_border_color_title"
+            woalk:columns="4"
+            android:defaultValue="@color/colors_lightgray" />
         <CheckBoxPreference
             android:key="show_app_icon"
             android:title="@string/pref_appear_show_app_icon_title"

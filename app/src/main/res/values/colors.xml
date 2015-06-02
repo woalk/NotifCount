@@ -3,4 +3,23 @@
 
   <drawable name="notification_number_text_color">#ff000000</drawable>
 
+  <!-- ** array `colors` ** -->
+  <color name="colors_black">@android:color/black</color>
+  <color name="colors_darkgray">#444</color>
+  <color name="colors_gray">#888</color>
+  <color name="colors_lightgray">#ccc</color>
+  <color name="colors_white">@android:color/white</color>
+  <color name="colors_red">#f00</color>
+  <color name="colors_green">#0f0</color>
+  <color name="colors_blue">#00f</color>
+  <color name="colors_yellow">#ff0</color>
+  <color name="colors_magenta">#f0f</color>
+  <color name="colors_cyan">#0ff</color>
+  <color name="colors_maroon">#800000</color>
+  <color name="colors_navy">#000080</color>
+  <color name="colors_olive">#808000</color>
+  <color name="colors_purple">#800080</color>
+  <color name="colors_teal">#008080</color>
+  <!-- ** end array ** -->
+  
 </resources>

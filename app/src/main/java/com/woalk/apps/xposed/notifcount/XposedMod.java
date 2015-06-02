@@ -10,12 +10,20 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
+import android.util.TypedValue;
 
 import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
 
@@ -105,6 +113,7 @@ public class XposedMod implements IXposedHookLoadPackage,
                 .getObjectField(param.thisObject, "mNumberPain");
             mNumberPain.setTypeface(Typeface.DEFAULT_BOLD);
             mNumberPain.setTextSize(scaledPx);
+            mNumberPain.setColor(mSettingsHelper.getNumberColor());
 
             int overlayId;
             switch (numberSize) {
@@ -122,26 +131,41 @@ public class XposedMod implements IXposedHookLoadPackage,
             }
             if (overlayId > -1)
               mRes.setReplacement(PKG_SYSTEMUI, "drawable", "ic_notification_overlay",
-                  mModRes.fwd(overlayId));
+                  new XResources.DrawableLoader() {
+
+                    @Override
+                    public Drawable newDrawable(XResources xResources, int i) throws Throwable {
+                      int px = (int) toPx(2, xResources);
+                      ShapeDrawable a = new ShapeDrawable(new OvalShape());
+                      a.setPadding(px, px, px, px);
+                      a.getPaint().setColor(mSettingsHelper.getBadgeBorderColor());
+                      int px2 = (int) toPx(2.5f, xResources);
+                      ShapeDrawable b = new ShapeDrawable(new OvalShape());
+                      b.setPadding(px2, px2, px2, px2);
+                      b.getPaint().setColor(mSettingsHelper.getBadgeColor());
+                      Drawable l[] = new Drawable[] { a, b };
+                      return new LayerDrawable(l);
+                    }
+                  });
           }
         });
 
     findAndHookMethod(CLASS_STATUSBARICONVIEW, lpparam.classLoader, "set",
-        CLASS_STATUSBARICON, new XC_MethodHook() {
+            CLASS_STATUSBARICON, new XC_MethodHook() {
 
-          @Override
-          protected void beforeHookedMethod(MethodHookParam param)
-              throws Throwable {
-            Object icon = param.args[0];
-            int number = XposedHelpers.getIntField(icon, "number");
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param)
+                      throws Throwable {
+                Object icon = param.args[0];
+                int number = XposedHelpers.getIntField(icon, "number");
 
-            mSettingsHelper.reload();
+                mSettingsHelper.reload();
 
-            mRes.setReplacement(PKG_SYSTEMUI, "bool",
-                "config_statusBarShowNumber",
-                number > 1);
-          }
-        });
+                mRes.setReplacement(PKG_SYSTEMUI, "bool",
+                        "config_statusBarShowNumber",
+                        number > 1);
+              }
+            });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       hookAutoDecide_all_api21(lpparam.classLoader);
@@ -155,18 +179,18 @@ public class XposedMod implements IXposedHookLoadPackage,
   @TargetApi(16)
   private void hookNotificationInboxStyle() {
     XposedHelpers.findAndHookMethod(Notification.InboxStyle.class, "buildStyled",
-        Notification.class, new XC_MethodHook() {
+            Notification.class, new XC_MethodHook() {
 
-          @Override
-          protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            Notification n = (Notification) param.getResult();
-            if (n.number == 0) {
-              List<?> mTexts = (List<?>) XposedHelpers.getObjectField(
-                  param.thisObject, "mTexts");
-              n.number = mTexts.size();
-            }
-          }
-        });
+              @Override
+              protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Notification n = (Notification) param.getResult();
+                if (n.number == 0) {
+                  List<?> mTexts = (List<?>) XposedHelpers.getObjectField(
+                          param.thisObject, "mTexts");
+                  n.number = mTexts.size();
+                }
+              }
+            });
   }
 
   @TargetApi(21)
@@ -225,29 +249,30 @@ public class XposedMod implements IXposedHookLoadPackage,
   private void hookAutoDecide_update_api18() {
     Class<?> clazz = XposedHelpers.findClass(CLASS_STATUSBARMANAGERSERVICE, null);
     XposedHelpers.findAndHookMethod(clazz, "updateNotification", IBinder.class,
-        StatusBarNotification.class, new XC_MethodHook() {
+            StatusBarNotification.class, new XC_MethodHook() {
 
-          @SuppressWarnings("unchecked")
-          @Override
-          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            IBinder key = (IBinder) param.args[0];
-            StatusBarNotification sbn = (StatusBarNotification) param.args[1];
+              @SuppressWarnings("unchecked")
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                IBinder key = (IBinder) param.args[0];
+                StatusBarNotification sbn = (StatusBarNotification) param.args[1];
 
-            HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
-                .getObjectField(param.thisObject, "mNotifications");
+                HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder,
+                        StatusBarNotification>) XposedHelpers
+                        .getObjectField(param.thisObject, "mNotifications");
 
-            mSettingsHelper.reload();
+                mSettingsHelper.reload();
 
-            if (mNotifications.containsKey(key)) {
-              StatusBarNotification oldSbn = mNotifications.get(key);
-              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
-                  mSettingsHelper.getSetting(sbn.getPackageName()));
-            } else {
-              autoApplyNumber(sbn.getNotification(),
-                  mSettingsHelper.getSetting(sbn.getPackageName()));
-            }
-          }
-        });
+                if (mNotifications.containsKey(key)) {
+                  StatusBarNotification oldSbn = mNotifications.get(key);
+                  autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                          mSettingsHelper.getSetting(sbn.getPackageName()));
+                } else {
+                  autoApplyNumber(sbn.getNotification(),
+                          mSettingsHelper.getSetting(sbn.getPackageName()));
+                }
+              }
+            });
   }
 
   @TargetApi(18)
@@ -263,7 +288,7 @@ public class XposedMod implements IXposedHookLoadPackage,
             mSettingsHelper.reload();
 
             autoApplyNumber(sbn.getNotification(),
-                mSettingsHelper.getSetting(sbn.getPackageName()));
+                    mSettingsHelper.getSetting(sbn.getPackageName()));
           }
         });
   }
@@ -315,7 +340,7 @@ public class XposedMod implements IXposedHookLoadPackage,
             Object sbn = param.args[1];
 
             Notification notification = (Notification) XposedHelpers.getObjectField(
-                sbn, "notification");
+                    sbn, "notification");
             if (notification.number == 0) {
               String pkg = (String) XposedHelpers.getObjectField(
                   sbn, "pkg");
@@ -417,5 +442,9 @@ public class XposedMod implements IXposedHookLoadPackage,
       j++;
     String intstr = str.substring(i, j);
     return !intstr.equals("") ? Integer.parseInt(intstr) : 0;
+  }
+
+  private float toPx(float dp, Resources res) {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
   }
 }
