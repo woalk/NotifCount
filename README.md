@@ -3,6 +3,7 @@
 
 ### Mod information
 This module currently has the following abilities:
+
 1 - Enable the Android-built-in functionality to add a number to notifications which provide Android a number, e.g. Messaging apps (like Telegram)
 
 2 - Automatically add numbers to apps that do not provide such quantity numbers to the system. The numbers are either fetched from the notification title, summary or by counting the times an app adds content to a notification.
@@ -11,7 +12,7 @@ It can be manually 'arranged' for specific apps, so that they use a user-specifi
 
 *_Suggestions:_ Use "Title containing number" for Download Manager (com.android.providers.downloads) and either that or "Don't add number" for e.g. music players like Google Play Music. This solved two larger bugs with this feature.*
 
-3 - Customize the appearance of the number - Change between opaque background, transparent background, or smaller number.
+3 - Customize the appearance of the number - Change the background shape, color, border color, text color, and size!
 
 More features related to these functions may be added in the future.
 
