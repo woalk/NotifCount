@@ -368,7 +368,8 @@ public class XposedMod implements IXposedHookLoadPackage,
       AppSetting setting) {
     // If no settings could be found, apply default settings
     if (setting == null)
-      setting = new AppSetting(null, AppSetting.SETTING_AUTO);
+      setting = new AppSetting(null, mSettingsHelper.isWhitelist() ? AppSetting.SETTING_STOCK :
+              AppSetting.SETTING_AUTO);
 
     if (setting.getPreferredSetting() == AppSetting.SETTING_NONE) {
       // Remove notification number.

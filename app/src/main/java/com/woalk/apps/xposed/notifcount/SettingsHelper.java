@@ -21,6 +21,7 @@ public class SettingsHelper {
   private static final String PREFS = PACKAGE_NAME + "_preferences";
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
+  private static final String NOTIFICATION_USE_WHITELIST = "default_increase_onupdate";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
   private static final String NOTIFICATION_NUMBER_BADGE_SHAPE = "number_badge_shape";
   private static final String NOTIFICATION_NUMBER_BADGE_COLOR = "number_badge_color";
@@ -142,6 +143,15 @@ public class SettingsHelper {
     else if (mXSharedPreferences != null)
       number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_COLOR, Color.BLACK);
     return number;
+  }
+
+  public boolean isWhitelist() {
+    boolean bool = false;
+    if (mSharedPreferences != null)
+      bool = mSharedPreferences.getBoolean(NOTIFICATION_USE_WHITELIST, false);
+    else if (mXSharedPreferences != null)
+      bool = mXSharedPreferences.getBoolean(NOTIFICATION_USE_WHITELIST, false);
+    return bool;
   }
 
   public int getBadgeBorderColor() {

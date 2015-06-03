@@ -25,8 +25,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,6 +38,8 @@ public class AppListActivity extends ListActivity {
   private static SettingsHelper mSettingsHelper;
   private static AppListAdapter mAdapter;
 
+  private boolean isWhitelist;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -48,6 +48,8 @@ public class AppListActivity extends ListActivity {
     new LoadAppsInfoTask().execute();
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setTitle(R.string.pref_apps_increase_onupdate_title);
+
+    this.isWhitelist = mSettingsHelper.isWhitelist();
 
     this.getListView().setFastScrollEnabled(true);
   }
@@ -78,8 +80,11 @@ public class AppListActivity extends ListActivity {
       AppInfo appInfo = new AppInfo();
       appInfo.title = (String) app.loadLabel(packageManager);
       appInfo.app = mSettingsHelper.getSetting(app.packageName);
-      if (appInfo.app == null)
+      if (appInfo.app == null) {
         appInfo.app = new SettingsHelper.AppSetting(app.packageName);
+        appInfo.app.setPreferredSetting(isWhitelist ? SettingsHelper.AppSetting.SETTING_STOCK :
+                SettingsHelper.AppSetting.SETTING_AUTO);
+      }
       appInfo.icon = app.loadIcon(packageManager);
       apps.add(appInfo);
       dialog.setProgress(i++);
@@ -133,7 +138,7 @@ public class AppListActivity extends ListActivity {
     @Override
     protected void onPostExecute(Void void_) {
       super.onPostExecute(void_);
-      mAdapter = new AppListAdapter(AppListActivity.this, appInfos);
+      mAdapter = new AppListAdapter(AppListActivity.this, appInfos, isWhitelist);
       setListAdapter(mAdapter);
       dialog.dismiss();
     }
@@ -141,10 +146,12 @@ public class AppListActivity extends ListActivity {
 
   private static class AppListAdapter extends ArrayAdapter<AppInfo> {
     LayoutInflater mInflater;
+    private final boolean isWhitelist;
 
-    public AppListAdapter(Context context, List<AppInfo> items) {
+    public AppListAdapter(Context context, List<AppInfo> items, boolean is_whitelist) {
       super(context, 0, items);
       mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      this.isWhitelist = is_whitelist;
     }
 
     private static class Holder {
@@ -187,7 +194,8 @@ public class AppListActivity extends ListActivity {
       holder.icon.setImageDrawable(item.icon);
 
       holder.value.setText(item.app.toShortString());
-      if (item.app.getPreferredSetting() != AppSetting.SETTING_AUTO)
+      if (item.app.getPreferredSetting() != (isWhitelist ? SettingsHelper.AppSetting.SETTING_STOCK :
+              SettingsHelper.AppSetting.SETTING_AUTO))
         holder.value.setTypeface(Typeface.DEFAULT_BOLD);
       else
         holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
@@ -242,21 +250,21 @@ public class AppListActivity extends ListActivity {
 
       holder.radioG.setOnCheckedChangeListener(null);
 
-      int checkedRadio = R.id.radio0;
+      int checkedRadio = isWhitelist ? R.id.radio2 : R.id.radio0;
       switch (item.app.getPreferredSetting()) {
-        case AppSetting.SETTING_NONE:
+        case SettingsHelper.AppSetting.SETTING_NONE:
           checkedRadio = R.id.radio1;
           break;
-        case AppSetting.SETTING_STOCK:
+        case SettingsHelper.AppSetting.SETTING_STOCK:
           checkedRadio = R.id.radio2;
           break;
-        case AppSetting.SETTING_TITLE:
+        case SettingsHelper.AppSetting.SETTING_TITLE:
           checkedRadio = R.id.radio3;
           break;
-        case AppSetting.SETTING_SHORTSUMMARY:
+        case SettingsHelper.AppSetting.SETTING_SHORTSUMMARY:
           checkedRadio = R.id.radio4;
           break;
-        case AppSetting.SETTING_COUNTUPDATES:
+        case SettingsHelper.AppSetting.SETTING_COUNTUPDATES:
           checkedRadio = R.id.radio5;
           break;
       }
@@ -268,25 +276,34 @@ public class AppListActivity extends ListActivity {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
           switch (checkedId) {
             case R.id.radio0:
-              item.app.setPreferredSetting(AppSetting.SETTING_AUTO);
-              holder.value.setText(item.app.toShortString());
-              holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-              mSettingsHelper.removeListItem(item.app.getPackageName());
-              return;
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_AUTO);
+              if (!isWhitelist /* = isBlacklist */) {
+                holder.value.setText(item.app.toShortString());
+                holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+                mSettingsHelper.removeListItem(item.app.getPackageName());
+                return;
+              }
+              break;
             case R.id.radio1:
-              item.app.setPreferredSetting(AppSetting.SETTING_NONE);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_NONE);
               break;
             case R.id.radio2:
-              item.app.setPreferredSetting(AppSetting.SETTING_STOCK);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_STOCK);
+              if (isWhitelist) {
+                holder.value.setText(item.app.toShortString());
+                holder.value.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+                mSettingsHelper.removeListItem(item.app.getPackageName());
+                return;
+              }
               break;
             case R.id.radio3:
-              item.app.setPreferredSetting(AppSetting.SETTING_TITLE);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_TITLE);
               break;
             case R.id.radio4:
-              item.app.setPreferredSetting(AppSetting.SETTING_SHORTSUMMARY);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_SHORTSUMMARY);
               break;
             case R.id.radio5:
-              item.app.setPreferredSetting(AppSetting.SETTING_COUNTUPDATES);
+              item.app.setPreferredSetting(SettingsHelper.AppSetting.SETTING_COUNTUPDATES);
               break;
           }
           mSettingsHelper.alterListItem(item.app);
