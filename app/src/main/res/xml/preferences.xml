@@ -11,12 +11,19 @@
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_appearance" >
-        <ListPreference
+        <EditTextPreference
             android:key="number_size"
-            android:title="@string/pref_appear_number_size"
-            android:dialogTitle="@string/pref_appear_number_size"
-            android:entries="@array/pref_appear_number_size_list"
-            android:entryValues="@array/pref_appear_number_size_value_list"
+            android:title="@string/pref_appear_number_size_title"
+            android:dialogTitle="@string/pref_appear_number_size_title"
+            android:inputType="numberDecimal"
+            android:numeric="decimal"
+            android:defaultValue="9" />
+        <ListPreference
+            android:key="number_badge_shape"
+            android:title="@string/pref_appear_number_badge_shape"
+            android:dialogTitle="@string/pref_appear_number_badge_shape"
+            android:entries="@array/pref_appear_number_badge_shape_list"
+            android:entryValues="@array/pref_appear_number_badge_shape_value_list"
             android:defaultValue="0" />
         <com.woalk.apps.lib.colorpicker.ColorPreference
             android:key="number_badge_color"

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_appear_number_size_list">
-        <item>@string/pref_appear_number_size_0</item>
-        <item>@string/pref_appear_number_size_1</item>
-        <item>@string/pref_appear_number_size_2</item>
-        <item>@string/pref_appear_number_size_default</item>
+    <string-array name="pref_appear_number_badge_shape_list">
+        <item>@string/pref_appear_number_badge_shape_0</item>
+        <item>@string/pref_appear_number_badge_shape_1</item>
+        <item>@string/pref_appear_number_badge_shape_2</item>
+        <item>@string/pref_appear_number_badge_shape_3</item>
     </string-array>
-    <string-array name="pref_appear_number_size_value_list" translatable="false">
+    <string-array name="pref_appear_number_badge_shape_value_list" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-        <item>-1</item>
+        <item>3</item>
     </string-array>
 
     <integer-array name="colors">

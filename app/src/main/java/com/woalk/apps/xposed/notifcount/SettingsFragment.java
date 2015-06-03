@@ -15,11 +15,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NotificationCompat;
+import android.widget.EditText;
 
 import java.util.Random;
 
@@ -100,8 +102,12 @@ public class SettingsFragment extends PreferenceFragment implements
       }
     });
 
-    ListPreference numberSizePref = (ListPreference) findPreference("number_size");
-    numberSizePref.setSummary(numberSizePref.getEntry());
+    EditTextPreference numberSizePref = (EditTextPreference) findPreference("number_size");
+    numberSizePref.setSummary(getString(R.string.pref_appear_number_size_summary,
+        numberSizePref.getText()));
+
+    ListPreference numberBadgeShapePref = (ListPreference) findPreference("number_badge_shape");
+    numberBadgeShapePref.setSummary(numberBadgeShapePref.getEntry());
 
     Preference showAppIcon = findPreference("show_app_icon");
     showAppIcon.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -202,6 +208,10 @@ public class SettingsFragment extends PreferenceFragment implements
     if (pref instanceof ListPreference) {
       ListPreference listPref = (ListPreference) pref;
       pref.setSummary(listPref.getEntry());
+    } else if (pref.getKey().equals("number_size")) {
+      EditTextPreference editTextPref = (EditTextPreference) pref;
+      editTextPref.setSummary(getString(R.string.pref_appear_number_size_summary,
+          editTextPref.getText()));
     }
   }
 
