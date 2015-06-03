@@ -10,12 +10,22 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.graphics.drawable.shapes.RectShape;
+import android.graphics.drawable.shapes.RoundRectShape;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Build;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
+import android.util.TypedValue;
 
 import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
 
@@ -97,51 +107,76 @@ public class XposedMod implements IXposedHookLoadPackage,
               throws Throwable {
             Context context = (Context) param.args[0];
             final Resources res = context.getResources();
-            int numberSize = mSettingsHelper.getNumberSize();
-            final float densityMultiplier = res.getDisplayMetrics().density;
-            final float scaledPx = ((numberSize == 2) ? 7 : 9) * densityMultiplier;
+            final float numberSize = mSettingsHelper.getNumberSize();
+            final int numberShape = mSettingsHelper.getNumberBadgeShape();
 
             Paint mNumberPain = (Paint) XposedHelpers
                 .getObjectField(param.thisObject, "mNumberPain");
             mNumberPain.setTypeface(Typeface.DEFAULT_BOLD);
-            mNumberPain.setTextSize(scaledPx);
+            mNumberPain.setTextSize(toPx(numberSize, res));
+            mNumberPain.setColor(mSettingsHelper.getNumberColor());
 
-            int overlayId;
-            switch (numberSize) {
-              case 1:
-                overlayId = R.drawable.ic_notification_overlay_transparent;
-                break;
-              case 2:
-                overlayId = R.drawable.ic_notification_overlay_small;
-                break;
-              case 0:
-                overlayId = R.drawable.ic_notification_overlay;
-                break;
-              default:
-                overlayId = -1;
-            }
-            if (overlayId > -1)
-              mRes.setReplacement(PKG_SYSTEMUI, "drawable", "ic_notification_overlay",
-                  mModRes.fwd(overlayId));
+            mRes.setReplacement(PKG_SYSTEMUI, "drawable", "ic_notification_overlay",
+                  new XResources.DrawableLoader() {
+                    @Override
+                    public Drawable newDrawable(XResources xResources, int i) throws Throwable {
+                      Shape shape1; Shape shape2;
+                      float cornersPx = toPx((numberSize + 2) / 3, xResources);
+                      switch (numberShape) {
+                        case SettingsHelper.NUMBER_SHAPE_OVAL:
+                          shape1 = new OvalShape();
+                          shape2 = new OvalShape();
+                          break;
+                        case SettingsHelper.NUMBER_SHAPE_RECTANGLE:
+                          shape1 = new RectShape();
+                          shape2 = new RectShape();
+                          break;
+                        case SettingsHelper.NUMBER_SHAPE_RECTANGULAR_CIRCLE:
+                          cornersPx = toPx((numberSize + 2) / 2, xResources);
+                        case SettingsHelper.NUMBER_SHAPE_ROUND_RECTANGLE:
+                          float[] corners = new float[]{
+                              cornersPx, cornersPx, cornersPx, cornersPx, cornersPx, cornersPx,
+                              cornersPx, cornersPx
+                          };
+                          shape1 = new RoundRectShape(corners, null, null);
+                          shape2 = new RoundRectShape(corners, null, null);
+                          break;
+                        default:
+                          shape1 = new OvalShape();
+                          shape2 = new OvalShape();
+                      }
+
+                      int px = (int) toPx(1, xResources);
+                      ShapeDrawable a = new ShapeDrawable(shape1);
+                      a.setPadding(px, px, px, px);
+                      a.getPaint().setColor(mSettingsHelper.getBadgeBorderColor());
+                      int px2 = (int) (toPx(2, xResources));
+                      ShapeDrawable b = new ShapeDrawable(shape2);
+                      b.setPadding(px2, px2, px2, px2);
+                      b.getPaint().setColor(mSettingsHelper.getBadgeColor());
+                      Drawable l[] = new Drawable[] { a, b };
+                      return new LayerDrawable(l);
+                    }
+                  });
           }
         });
 
     findAndHookMethod(CLASS_STATUSBARICONVIEW, lpparam.classLoader, "set",
-        CLASS_STATUSBARICON, new XC_MethodHook() {
+            CLASS_STATUSBARICON, new XC_MethodHook() {
 
-          @Override
-          protected void beforeHookedMethod(MethodHookParam param)
-              throws Throwable {
-            Object icon = param.args[0];
-            int number = XposedHelpers.getIntField(icon, "number");
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param)
+                      throws Throwable {
+                Object icon = param.args[0];
+                int number = XposedHelpers.getIntField(icon, "number");
 
-            mSettingsHelper.reload();
+                mSettingsHelper.reload();
 
-            mRes.setReplacement(PKG_SYSTEMUI, "bool",
-                "config_statusBarShowNumber",
-                number > 1);
-          }
-        });
+                mRes.setReplacement(PKG_SYSTEMUI, "bool",
+                        "config_statusBarShowNumber",
+                        number > 1);
+              }
+            });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       hookAutoDecide_all_api21(lpparam.classLoader);
@@ -155,18 +190,18 @@ public class XposedMod implements IXposedHookLoadPackage,
   @TargetApi(16)
   private void hookNotificationInboxStyle() {
     XposedHelpers.findAndHookMethod(Notification.InboxStyle.class, "buildStyled",
-        Notification.class, new XC_MethodHook() {
+            Notification.class, new XC_MethodHook() {
 
-          @Override
-          protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            Notification n = (Notification) param.getResult();
-            if (n.number == 0) {
-              List<?> mTexts = (List<?>) XposedHelpers.getObjectField(
-                  param.thisObject, "mTexts");
-              n.number = mTexts.size();
-            }
-          }
-        });
+              @Override
+              protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Notification n = (Notification) param.getResult();
+                if (n.number == 0) {
+                  List<?> mTexts = (List<?>) XposedHelpers.getObjectField(
+                          param.thisObject, "mTexts");
+                  n.number = mTexts.size();
+                }
+              }
+            });
   }
 
   @TargetApi(21)
@@ -233,7 +268,8 @@ public class XposedMod implements IXposedHookLoadPackage,
             IBinder key = (IBinder) param.args[0];
             StatusBarNotification sbn = (StatusBarNotification) param.args[1];
 
-            HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder, StatusBarNotification>) XposedHelpers
+            HashMap<IBinder, StatusBarNotification> mNotifications = (HashMap<IBinder,
+                StatusBarNotification>) XposedHelpers
                 .getObjectField(param.thisObject, "mNotifications");
 
             mSettingsHelper.reload();
@@ -263,7 +299,7 @@ public class XposedMod implements IXposedHookLoadPackage,
             mSettingsHelper.reload();
 
             autoApplyNumber(sbn.getNotification(),
-                mSettingsHelper.getSetting(sbn.getPackageName()));
+                    mSettingsHelper.getSetting(sbn.getPackageName()));
           }
         });
   }
@@ -315,7 +351,7 @@ public class XposedMod implements IXposedHookLoadPackage,
             Object sbn = param.args[1];
 
             Notification notification = (Notification) XposedHelpers.getObjectField(
-                sbn, "notification");
+                    sbn, "notification");
             if (notification.number == 0) {
               String pkg = (String) XposedHelpers.getObjectField(
                   sbn, "pkg");
@@ -417,5 +453,9 @@ public class XposedMod implements IXposedHookLoadPackage,
       j++;
     String intstr = str.substring(i, j);
     return !intstr.equals("") ? Integer.parseInt(intstr) : 0;
+  }
+
+  private float toPx(float dp, Resources res) {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
   }
 }

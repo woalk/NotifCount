@@ -4,6 +4,7 @@ package com.woalk.apps.xposed.notifcount;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 
 import de.robv.android.xposed.XSharedPreferences;
 
@@ -21,7 +22,16 @@ public class SettingsHelper {
 
   private static final String NOTIFICATION_FILTER_LIST = "apps_list";
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
+  private static final String NOTIFICATION_NUMBER_BADGE_SHAPE = "number_badge_shape";
+  private static final String NOTIFICATION_NUMBER_BADGE_COLOR = "number_badge_color";
+  private static final String NOTIFICATION_NUMBER_COLOR = "number_color";
+  private static final String NOTIFICATION_NUMBER_BADGE_BORDER_COLOR = "number_badge_border_color";
   private static final String PREFERENCES_VERSION = "ver";
+
+  public static final int NUMBER_SHAPE_OVAL = 0;
+  public static final int NUMBER_SHAPE_RECTANGLE = 1;
+  public static final int NUMBER_SHAPE_ROUND_RECTANGLE = 2;
+  public static final int NUMBER_SHAPE_RECTANGULAR_CIRCLE = 3;
 
   private XSharedPreferences mXSharedPreferences;
   private SharedPreferences mSharedPreferences;
@@ -98,12 +108,48 @@ public class SettingsHelper {
     return new AppSetting(pref.substring(0, i), Integer.valueOf(pref.substring(i + 2)));
   }
 
-  public int getNumberSize() {
+  public float getNumberSize() {
+    float number = 0;
+    if (mSharedPreferences != null)
+      number = Float.parseFloat(mSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "9"));
+    else if (mXSharedPreferences != null)
+      number = Float.parseFloat(mXSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "9"));
+    return number;
+  }
+
+  public int getNumberBadgeShape() {
     int number = 0;
     if (mSharedPreferences != null)
-      number = Integer.valueOf(mSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
+      number = Integer.parseInt(mSharedPreferences.getString(NOTIFICATION_NUMBER_BADGE_SHAPE, "0"));
     else if (mXSharedPreferences != null)
-      number = Integer.valueOf(mXSharedPreferences.getString(NOTIFICATION_NUMBER_SIZE, "0"));
+      number = Integer.parseInt(mXSharedPreferences.getString(NOTIFICATION_NUMBER_BADGE_SHAPE, "0"));
+    return number;
+  }
+
+  public int getBadgeColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_COLOR, Color.WHITE);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_COLOR, Color.WHITE);
+    return number;
+  }
+
+  public int getNumberColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_COLOR, Color.BLACK);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_COLOR, Color.BLACK);
+    return number;
+  }
+
+  public int getBadgeBorderColor() {
+    int number = 0;
+    if (mSharedPreferences != null)
+      number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
+    else if (mXSharedPreferences != null)
+      number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
     return number;
   }
 
