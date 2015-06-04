@@ -260,17 +260,23 @@ public class XposedMod implements IXposedHookLoadPackage,
                     public boolean onMenuItemClick(MenuItem item) {
                       if (item.getItemId() == id_inspect_item) {
                         startApplicationDetailsActivity(packageNameF, mContext);
-                        String method_animateCollapse =
-                            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) ?
-                                "animateCollapsePanels" : "animateCollapse";
-                        try {
-                          baseStatusBarClass.getMethod(method_animateCollapse, int.class)
-                              .invoke(mhParam.thisObject, 0);
-                        } catch (Throwable e) {
-                          e.printStackTrace();
-                        }
+                      } else if (item.getItemId() == android.R.id.custom) {
+                        Intent intent = new Intent(SingleAppActivity.INTENT_ACTION);
+                        intent.setPackage(SettingsHelper.PACKAGE_NAME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(SingleAppActivity.INTENT_EXTRA_PACKAGE_NAME, packageNameF);
+                        mContext.startActivity(intent);
                       } else {
                         return false;
+                      }
+                      String method_animateCollapse =
+                            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) ?
+                                  "animateCollapsePanels" : "animateCollapse";
+                      try {
+                        baseStatusBarClass.getMethod(method_animateCollapse, int.class)
+                              .invoke(mhParam.thisObject, 0);
+                      } catch (Throwable e) {
+                        e.printStackTrace();
                       }
                       return true;
                     }
@@ -278,7 +284,7 @@ public class XposedMod implements IXposedHookLoadPackage,
                   mNotificationBlamePopup.show();
 
                   setObjectField(mhParam.thisObject, "mNotificationBlamePopup",
-                      mNotificationBlamePopup);
+                        mNotificationBlamePopup);
 
                   return true;
                 }
