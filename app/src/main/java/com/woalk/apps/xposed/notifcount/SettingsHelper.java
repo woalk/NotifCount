@@ -27,6 +27,7 @@ public class SettingsHelper {
   private static final String NOTIFICATION_NUMBER_BADGE_COLOR = "number_badge_color";
   private static final String NOTIFICATION_NUMBER_COLOR = "number_color";
   private static final String NOTIFICATION_NUMBER_BADGE_BORDER_COLOR = "number_badge_border_color";
+  private static final String NOTIFICATION_SYSTEM_INTEGRATION = "system_integration";
   private static final String PREFERENCES_VERSION = "ver";
 
   public static final int NUMBER_SHAPE_OVAL = 0;
@@ -161,6 +162,15 @@ public class SettingsHelper {
     else if (mXSharedPreferences != null)
       number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
     return number;
+  }
+
+  public boolean getShouldDoSystemIntegration() {
+    boolean sys = false;
+    if (mSharedPreferences != null)
+      sys = mSharedPreferences.getBoolean(NOTIFICATION_SYSTEM_INTEGRATION, false);
+    else if (mXSharedPreferences != null)
+      sys = mXSharedPreferences.getBoolean(NOTIFICATION_SYSTEM_INTEGRATION, false);
+    return sys;
   }
 
   public int getPreferenceVersion() {

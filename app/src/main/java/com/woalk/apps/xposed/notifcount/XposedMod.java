@@ -109,13 +109,16 @@ public class XposedMod implements IXposedHookLoadPackage,
     mModRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
     mRes = resparam.res;
     mRes.setReplacement(PKG_SYSTEMUI, "drawable", "notification_number_text_color",
-        mModRes.fwd(R.drawable.notification_number_text_color));
+          mModRes.fwd(R.drawable.notification_number_text_color));
 
     // for hookSystemIntegration
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP &&
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      mRes.setReplacement(PKG_SYSTEMUI, "menu", "notification_popup_menu",
-          mModRes.fwd(R.menu.notification_popup_menu));
+      mSettingsHelper.reload();
+      if (mSettingsHelper.getShouldDoSystemIntegration()) {
+        mRes.setReplacement(PKG_SYSTEMUI, "menu", "notification_popup_menu",
+              mModRes.fwd(R.menu.notification_popup_menu));
+      }
     }
   }
 
@@ -124,7 +127,10 @@ public class XposedMod implements IXposedHookLoadPackage,
       throws Throwable {
     if (PKG_SETTINGS.equals(lpparam.packageName) &&
           Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      hookSystemIntegration_api21(lpparam.classLoader);
+      mSettingsHelper.reload();
+      if (mSettingsHelper.getShouldDoSystemIntegration()) {
+        hookSystemIntegration_api21(lpparam.classLoader);
+      }
     }
 
     if (!PKG_SYSTEMUI.equals(lpparam.packageName))
@@ -210,7 +216,9 @@ public class XposedMod implements IXposedHookLoadPackage,
               }
             });
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+      mSettingsHelper.reload();
+      if (mSettingsHelper.getShouldDoSystemIntegration()) {
       hookSystemIntegration_api16(lpparam.classLoader);
     }
 

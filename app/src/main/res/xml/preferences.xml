@@ -59,6 +59,11 @@
             woalk:columns="4"
             android:defaultValue="@color/colors_lightgray" />
         <CheckBoxPreference
+            android:key="system_integration"
+            android:title="@string/pref_system_integration_title"
+            android:summary="@string/pref_system_integration_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
             android:key="show_app_icon"
             android:title="@string/pref_appear_show_app_icon_title"
             android:summary="@string/pref_appear_show_app_icon_summary"
