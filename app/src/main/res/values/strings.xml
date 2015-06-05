@@ -54,5 +54,12 @@
         \n\nBase module by Benjamin Bukowski,\nGitHub user bbukowski.
         \nContinued abandoned development.
         \nSo, developed by Woalk Software since then,\nGitHub user woalk.</string>
+    <string name="pref_system_integration_title">System settings integration</string>
+    <string name="pref_system_integration_summary">Add Notification Count settings to the long-click menu of every notification.
+    \nNeeds reboot to apply.</string>
+    <string name="single_app_menu_item_title">Notification Count settings</string>
+    <string name="single_app_error_title">Error</string>
+    <string name="single_app_error_pkg_not_found">The requested app was not found on this device.</string>
+    <string name="single_app_error_misc">An error occurred while opening the settings.</string>
     
 </resources>
