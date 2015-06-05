@@ -30,7 +30,11 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.graphics.drawable.shapes.Shape;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
@@ -67,6 +71,8 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String CLASS_PHONESTATUSBAR = PKG_SYSTEMUI
       + ".statusbar.phone.PhoneStatusBar";
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
+  private static final String PKG_SETTINGS = "com.android.settings";
+  private static final String CLASS_APPNOTIFICATIONSETTINGS_API21 = PKG_SETTINGS + ".notification.AppNotificationSettings";
 
   private static SettingsHelper mSettingsHelper;
   private static String MODULE_PATH = null;
@@ -116,6 +122,10 @@ public class XposedMod implements IXposedHookLoadPackage,
   @Override
   public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam)
       throws Throwable {
+    if (PKG_SETTINGS.equals(lpparam.packageName) &&
+          Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      hookSystemIntegration_api21(lpparam.classLoader);
+    }
 
     if (!PKG_SYSTEMUI.equals(lpparam.packageName))
       return;
@@ -200,7 +210,9 @@ public class XposedMod implements IXposedHookLoadPackage,
               }
             });
 
-    hookSystemIntegration(lpparam.classLoader);
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      hookSystemIntegration_api16(lpparam.classLoader);
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       hookAutoDecide_all_api21(lpparam.classLoader);
@@ -211,10 +223,8 @@ public class XposedMod implements IXposedHookLoadPackage,
     }
   }
 
-  private void hookSystemIntegration(ClassLoader loader) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      // TODO Implement LOLLIPOP
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+  private void hookSystemIntegration_api16(ClassLoader loader) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       final Class<?> baseStatusBarClass = findClass(CLASS_BASESTATUSBAR, loader);
       final Class<?> commandQueueClass = findClass(CLASS_COMMANDQUEUE, loader);
       findAndHookMethod(baseStatusBarClass, "getNotificationLongClicker",
@@ -261,11 +271,7 @@ public class XposedMod implements IXposedHookLoadPackage,
                       if (item.getItemId() == id_inspect_item) {
                         startApplicationDetailsActivity(packageNameF, mContext);
                       } else if (item.getItemId() == android.R.id.custom) {
-                        Intent intent = new Intent(SingleAppActivity.INTENT_ACTION);
-                        intent.setPackage(SettingsHelper.PACKAGE_NAME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(SingleAppActivity.INTENT_EXTRA_PACKAGE_NAME, packageNameF);
-                        mContext.startActivity(intent);
+                        startNotificationCountSettins(packageNameF, mContext);
                       } else {
                         return false;
                       }
@@ -294,6 +300,29 @@ public class XposedMod implements IXposedHookLoadPackage,
     }
   }
 
+  private void hookSystemIntegration_api21(ClassLoader loader) {
+    final Class<?> appNotifClass = findClass(CLASS_APPNOTIFICATIONSETTINGS_API21, loader);
+    findAndHookMethod(appNotifClass, "onActivityCreated", Bundle.class, new XC_MethodHook() {
+      @Override
+      protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+        final PreferenceFragment thisObj = (PreferenceFragment) param.thisObject;
+        Preference pref = new Preference(thisObj.getActivity());
+        Resources res = thisObj.getActivity().getPackageManager()
+              .getResourcesForApplication(SettingsHelper.PACKAGE_NAME);
+        pref.setTitle(res.getText(R.string.single_app_menu_item_title));
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+          @Override
+          public boolean onPreferenceClick(Preference preference) {
+            startNotificationCountSettins(thisObj.getActivity().getIntent().getStringExtra
+                  ("app_package"), thisObj.getActivity());
+            return true;
+          }
+        });
+        thisObj.getPreferenceScreen().addPreference(pref);
+      }
+    });
+  }
+
   /*
   Method copied from AOSP source.
   See the big comment block above in hookSystemIntegration for the origin of this method.
@@ -303,6 +332,15 @@ public class XposedMod implements IXposedHookLoadPackage,
     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null));
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    context.startActivity(intent);
+  }
+
+  private void startNotificationCountSettins(String packageName, Context context) {
+    Intent intent = new Intent(SingleAppActivity.INTENT_ACTION);
+    intent.setPackage(SettingsHelper.PACKAGE_NAME);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    intent.putExtra(SingleAppActivity.INTENT_EXTRA_PACKAGE_NAME,
+          packageName);
     context.startActivity(intent);
   }
 
