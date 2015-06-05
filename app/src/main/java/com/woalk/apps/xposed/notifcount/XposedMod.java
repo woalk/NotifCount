@@ -216,10 +216,11 @@ public class XposedMod implements IXposedHookLoadPackage,
               }
             });
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       mSettingsHelper.reload();
       if (mSettingsHelper.getShouldDoSystemIntegration()) {
-      hookSystemIntegration_api16(lpparam.classLoader);
+        hookSystemIntegration_api16(lpparam.classLoader);
+      }
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
