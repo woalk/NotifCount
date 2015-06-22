@@ -8,6 +8,8 @@ import android.graphics.Color;
 
 import de.robv.android.xposed.XSharedPreferences;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -197,7 +199,7 @@ public class SettingsHelper {
         .apply();
   }
 
-  public static class AppSetting {
+  public static class AppSetting implements Serializable {
     public static final int SETTING_AUTO = 0;
     public static final int SETTING_NONE = 1;
     public static final int SETTING_STOCK = 2;
@@ -232,6 +234,17 @@ public class SettingsHelper {
 
     public void setPreferredSetting(int mPreferredSetting) {
       this.mPreferredSetting = mPreferredSetting;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+      out.writeUTF(getPackageName());
+      out.writeInt(getPreferredSetting());
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException,
+          ClassNotFoundException {
+      setPackageName(in.readUTF());
+      setPreferredSetting(in.readInt());
     }
 
     @Override

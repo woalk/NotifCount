@@ -69,10 +69,10 @@ public class SingleAppActivity extends Activity {
 
 	findViewById(R.id.itemlayout).setClickable(false);
 
-	title = (TextView) findViewById(android.R.id.title);
-	summary = (TextView) findViewById(android.R.id.summary);
+	title = (TextView) findViewById(android.R.id.text1);
+	summary = (TextView) findViewById(android.R.id.text2);
 	value = (TextView) findViewById(R.id.value);
-	icon = (ImageView) findViewById(R.id.icon);
+	icon = (ImageView) findViewById(android.R.id.icon);
 
 	title.setText(pm.getApplicationLabel(appInfo));
 	summary.setText(app.getPackageName());
