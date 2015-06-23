@@ -551,6 +551,11 @@ public class XposedMod implements IXposedHookLoadPackage,
     // Also, ignore this if the app should only count updates.
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
         && setting.getPreferredSetting() != AppSetting.SETTING_COUNTUPDATES) {
+      // If the number should be found in the content, extract it from there and nowhere else.
+      if (setting.getPreferredSetting() == AppSetting.SETTING_CONTENT) {
+        extractNumberFromContent(newNotif);
+        return;
+      }
       // Try to find a number in the title.
       // If SETTING_SHORTSUMMARY is set, jump directly to checking the summary
       // (ignore title).
@@ -596,9 +601,24 @@ public class XposedMod implements IXposedHookLoadPackage,
   }
 
   @TargetApi(19)
+  private static boolean extractNumberFromContent(Notification notification) {
+    String notification_text = notification.extras.getString(Notification.EXTRA_TEXT);
+    if (notification_text != null) {
+      int i = findFirstIntegerInString(notification_text);
+      if (i == 0)
+        return false;
+      else {
+        notification.number = i;
+        return true;
+      }
+    } else
+      return false;
+  }
+
+  @TargetApi(19)
   private static boolean extractNumberFromSummery(Notification notification) {
     String notification_text = notification.extras
-        .getString(Notification.EXTRA_SUMMARY_TEXT);
+          .getString(Notification.EXTRA_SUMMARY_TEXT);
     if (notification_text != null) {
       int i = findFirstIntegerInString(notification_text);
       if (i == 0)

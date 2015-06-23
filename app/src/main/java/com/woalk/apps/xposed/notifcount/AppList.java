@@ -321,11 +321,14 @@ public class AppList {
         case SettingsHelper.AppSetting.SETTING_TITLE:
           checkedRadio = R.id.radio3;
           break;
-        case SettingsHelper.AppSetting.SETTING_SHORTSUMMARY:
+        case SettingsHelper.AppSetting.SETTING_CONTENT:
           checkedRadio = R.id.radio4;
           break;
-        case SettingsHelper.AppSetting.SETTING_COUNTUPDATES:
+        case SettingsHelper.AppSetting.SETTING_SHORTSUMMARY:
           checkedRadio = R.id.radio5;
+          break;
+        case SettingsHelper.AppSetting.SETTING_COUNTUPDATES:
+          checkedRadio = R.id.radio6;
           break;
       }
       vh.radioG.check(checkedRadio);
@@ -360,9 +363,12 @@ public class AppList {
               app.getAppSetting().setPreferredSetting(SettingsHelper.AppSetting.SETTING_TITLE);
               break;
             case R.id.radio4:
-              app.getAppSetting().setPreferredSetting(SettingsHelper.AppSetting.SETTING_SHORTSUMMARY);
+              app.getAppSetting().setPreferredSetting(SettingsHelper.AppSetting.SETTING_CONTENT);
               break;
             case R.id.radio5:
+              app.getAppSetting().setPreferredSetting(SettingsHelper.AppSetting.SETTING_SHORTSUMMARY);
+              break;
+            case R.id.radio6:
               app.getAppSetting().setPreferredSetting(SettingsHelper.AppSetting.SETTING_COUNTUPDATES);
               break;
           }

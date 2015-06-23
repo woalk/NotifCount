@@ -87,7 +87,17 @@ public class SettingsFragment extends PreferenceFragment implements
 
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        showTestTextNumberedNotification(false);
+        showTestTextNumberedNotification(2);
+        return true;
+      }
+    });
+
+    testNotif = findPreference("test_notif_wc_number");
+    testNotif.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        showTestTextNumberedNotification(3);
         return true;
       }
     });
@@ -97,7 +107,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        showTestTextNumberedNotification(true);
+        showTestTextNumberedNotification(1);
         return true;
       }
     });
@@ -169,7 +179,7 @@ public class SettingsFragment extends PreferenceFragment implements
     notificationManager.notify(0, n);
   }
 
-  private void showTestTextNumberedNotification(boolean summaryTrue_titleFalse) {
+  private void showTestTextNumberedNotification(int summary1_title2_content3) {
     Intent resultIntent = new Intent(getActivity(), SettingsActivity.class);
 
     PendingIntent resultPendingIntent = PendingIntent.getActivity(getActivity(), 0,
@@ -184,13 +194,13 @@ public class SettingsFragment extends PreferenceFragment implements
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
         .setSmallIcon(R.drawable.ic_stat_notify)
-        .setContentTitle(summaryTrue_titleFalse ? appName : numberString)
-        .setContentText(content)
+        .setContentTitle(summary1_title2_content3 == 2 ? numberString : appName)
+        .setContentText(summary1_title2_content3 == 3 ? numberString : content)
         .setContentIntent(resultPendingIntent)
         .setAutoCancel(true)
         .setStyle(new NotificationCompat.BigTextStyle()
-            .bigText(content)
-            .setSummaryText(summaryTrue_titleFalse ? numberString : appName));
+              .bigText(summary1_title2_content3 == 3 ? numberString : content)
+              .setSummaryText(summary1_title2_content3 == 1 ? numberString : appName));
 
     Notification n = builder.build();
 

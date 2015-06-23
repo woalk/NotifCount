@@ -13,6 +13,7 @@
     <string name="pref_apps_increase_onupdate_title">Exception list</string>
     <string name="pref_apps_increase_onupdate_auto">Automatic (default)</string>
     <string name="pref_apps_increase_onupdate_titlenumber">Title containing number</string>
+    <string name="pref_apps_increase_onupdate_contentnumber">Content containing number</string>
     <string name="pref_apps_increase_onupdate_summarynumber">Summary containing number</string>
     <string name="pref_apps_increase_onupdate_stocknumber">Don\'t add number</string>
     <string name="pref_apps_increase_onupdate_nonumber">Don\'t show any number</string>
@@ -42,6 +43,8 @@
     <string name="pref_test_notif_wo_number_summary">Creates a test notification without a number.</string>
     <string name="pref_test_notif_wt_number_title">With number in title</string>
     <string name="pref_test_notif_wt_number_summary">Creates a test notification without a number, but with the title containing the number.</string>
+    <string name="pref_test_notif_wc_number_title">With number in content</string>
+    <string name="pref_test_notif_wc_number_summary">Creates a test notification without a number, but with the content text containing the number. Will only work when set in the exception list.</string>
     <string name="pref_test_notif_ws_number_title">With number in summary</string>
     <string name="pref_test_notif_ws_number_summary">Creates a test notification without a number, but with a summary text containing the number.</string>
     <string name="pref_clear_info_title">Clean App Update</string>
