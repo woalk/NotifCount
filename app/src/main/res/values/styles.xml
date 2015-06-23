@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/logo_color</item>
         <item name="colorPrimaryDark">@color/logo_color_dark</item>
         <item name="colorAccent">@color/logo_color</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 
     <style name="NAppTheme" parent="NAppBaseTheme">
