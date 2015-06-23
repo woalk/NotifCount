@@ -61,5 +61,8 @@
     <string name="single_app_error_title">Error</string>
     <string name="single_app_error_pkg_not_found">The requested app was not found on this device.</string>
     <string name="single_app_error_misc">An error occurred while opening the settings.</string>
+    <string name="hint_search_apps">Search app</string>
+    <string name="item_search">Search</string>
+    <string name="content_d_close_search">Clear search</string>
     
 </resources>

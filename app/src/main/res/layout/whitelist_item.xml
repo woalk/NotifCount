@@ -75,7 +75,7 @@
             android:gravity="center"
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
-            android:textColor="#009688"
+            android:textColor="@color/logo_color"
             android:textSize="21sp" />
 
     </LinearLayout>
