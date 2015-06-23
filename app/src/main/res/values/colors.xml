@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+  <color name="logo_color">#009688</color>
+  <color name="logo_color_dark">#003e38</color>
+
   <drawable name="notification_number_text_color">#ff000000</drawable>
 
   <!-- ** array `colors` ** -->

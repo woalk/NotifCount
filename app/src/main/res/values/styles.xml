@@ -1,12 +1,23 @@
 <resources>
     
-    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize this theme in values-XY -->
+    <style name="NAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- All customizations NOT specific to an API level go here -->
+        <item name="colorPrimary">@color/logo_color</item>
+        <item name="colorPrimaryDark">@color/logo_color_dark</item>
+        <item name="colorAccent">@color/logo_color</item>
     </style>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations NOT specific to an API level go here -->
+    <style name="NAppTheme" parent="NAppBaseTheme">
+        <!-- All customizations for low API levels go here -->
+        <!-- Customize this theme in values-XY to override -->
+    </style>
+
+    <style name="ToolbarTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/logo_color</item>
+        <item name="colorPrimaryDark">@color/logo_color_dark</item>
+        <item name="colorAccent">@color/logo_color</item>
+        <item name="colorControlNormal">?android:attr/textColorPrimary</item>
     </style>
 
 </resources>
