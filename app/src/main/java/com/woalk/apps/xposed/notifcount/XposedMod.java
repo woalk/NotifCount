@@ -1,16 +1,12 @@
 
 package com.woalk.apps.xposed.notifcount;
 
-import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.getObjectField;
-import static de.robv.android.xposed.XposedHelpers.setObjectField;
-
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
@@ -37,7 +33,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.htc.preference.HtcPreference;
 import com.woalk.apps.xposed.notifcount.SettingsHelper.AppSetting;
+
+import java.util.HashMap;
+import java.util.List;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -49,8 +49,11 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-import java.util.HashMap;
-import java.util.List;
+import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
+import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.getObjectField;
+import static de.robv.android.xposed.XposedHelpers.setObjectField;
 
 public class XposedMod implements IXposedHookLoadPackage,
     IXposedHookZygoteInit, IXposedHookInitPackageResources {
@@ -67,6 +70,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String CLASS_STATUSBARNOTIFICATION_API15 = "com.android.internal.statusbar.StatusBarNotification";
   private static final String PKG_SETTINGS = "com.android.settings";
   private static final String CLASS_APPNOTIFICATIONSETTINGS_API21 = PKG_SETTINGS + ".notification.AppNotificationSettings";
+  private static final String PKG_HTCPREFERENCE = "com.htc.preference";
 
   private static SettingsHelper mSettingsHelper;
   private static String MODULE_PATH = null;
@@ -303,11 +307,15 @@ public class XposedMod implements IXposedHookLoadPackage,
     }
   }
 
-  private void hookSystemIntegration_api21(ClassLoader loader) {
+  private void hookSystemIntegration_api21(final ClassLoader loader) {
     final Class<?> appNotifClass = findClass(CLASS_APPNOTIFICATIONSETTINGS_API21, loader);
     findAndHookMethod(appNotifClass, "onActivityCreated", Bundle.class, new XC_MethodHook() {
       @Override
       protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+        if (!(param.thisObject instanceof PreferenceFragment)) {
+          hookSystemIntegration_api21_htc(loader, param);
+          return;
+        }
         final PreferenceFragment thisObj = (PreferenceFragment) param.thisObject;
         Preference pref = new Preference(thisObj.getActivity());
         Resources res = thisObj.getActivity().getPackageManager()
@@ -324,6 +332,30 @@ public class XposedMod implements IXposedHookLoadPackage,
         thisObj.getPreferenceScreen().addPreference(pref);
       }
     });
+  }
+
+  private void hookSystemIntegration_api21_htc(ClassLoader loader,
+                                               XC_MethodHook.MethodHookParam param)
+          throws PackageManager.NameNotFoundException {
+    XposedBridge.log("HTC hook called!");
+    final Fragment thisObj = (Fragment) param.thisObject;
+    Object pref = XposedHelpers.newInstance(
+            findClass(PKG_HTCPREFERENCE + ".HtcPreference", loader), thisObj.getActivity());
+    Resources res = thisObj.getActivity().getPackageManager()
+            .getResourcesForApplication(SettingsHelper.PACKAGE_NAME);
+    XposedHelpers.callMethod(pref, "setTitle",
+            res.getText(R.string.single_app_menu_item_title));
+    XposedHelpers.callMethod(pref, "setOnPreferenceClickListener",
+            new HtcPreference.OnPreferenceClickListener() {
+              @Override
+              public boolean onPreferenceClick(HtcPreference preference) {
+                startNotificationCountSettins(thisObj.getActivity().getIntent().getStringExtra
+                        ("app_package"), thisObj.getActivity());
+                return true;
+              }
+            });
+    XposedHelpers.callMethod(XposedHelpers.callMethod(thisObj, "getPreferenceScreen"),
+            "addPreference", pref);
   }
 
   /*
