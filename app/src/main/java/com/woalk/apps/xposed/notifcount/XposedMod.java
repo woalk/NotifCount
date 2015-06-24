@@ -582,39 +582,25 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static boolean extractNumberFromTitle(Notification notification) {
     String notification_text = notification.extras
         .getString(Notification.EXTRA_TITLE);
-    if (notification_text != null) {
-      int i = findFirstIntegerInString(notification_text);
-      if (i == 0)
-        return false;
-      else {
-        notification.number = i;
-        return true;
-      }
-    } else
-      return false;
+    return setNotificationNumberFromText(notification, notification_text);
   }
 
   @TargetApi(19)
   private static boolean extractNumberFromContent(Notification notification) {
     String notification_text = notification.extras.getString(Notification.EXTRA_TEXT);
-    if (notification_text != null) {
-      int i = findFirstIntegerInString(notification_text);
-      if (i == 0)
-        return false;
-      else {
-        notification.number = i;
-        return true;
-      }
-    } else
-      return false;
+    return setNotificationNumberFromText(notification, notification_text);
   }
 
   @TargetApi(19)
   private static boolean extractNumberFromSummery(Notification notification) {
     String notification_text = notification.extras
           .getString(Notification.EXTRA_SUMMARY_TEXT);
-    if (notification_text != null) {
-      int i = findFirstIntegerInString(notification_text);
+    return setNotificationNumberFromText(notification, notification_text);
+  }
+
+  private static boolean setNotificationNumberFromText(Notification notification, String text) {
+    if (text != null) {
+      int i = findFirstIntegerInString(text);
       if (i == 0)
         return false;
       else {
