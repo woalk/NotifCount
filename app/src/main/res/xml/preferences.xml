@@ -58,6 +58,13 @@
             woalk:dialogTitle="@string/pref_appear_number_badge_border_color_title"
             woalk:columns="4"
             android:defaultValue="@color/colors_lightgray" />
+        <EditTextPreference
+            android:key="number_badge_alpha"
+            android:title="@string/pref_appear_number_badge_alpha_title"
+            android:dialogTitle="@string/pref_appear_number_badge_alpha_summary"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="255" />
         <CheckBoxPreference
             android:key="system_integration"
             android:title="@string/pref_system_integration_title"

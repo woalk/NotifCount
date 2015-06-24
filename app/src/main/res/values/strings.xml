@@ -32,6 +32,8 @@
     <string name="pref_appear_number_badge_shape_1">Rectangle</string>
     <string name="pref_appear_number_badge_shape_2">Round rectangle</string>
     <string name="pref_appear_number_badge_shape_3">Rectangular circle</string>
+    <string name="pref_appear_number_badge_alpha_title">Number badge alpha</string>
+    <string name="pref_appear_number_badge_alpha_summary">Current: %s (0 = transparent, 255 = opaque)</string>
     <string name="pref_apps_default_increase_onupdate_title">Use whitelist</string>
     <string name="pref_apps_default_increase_onupdate_summary_on">Current setting: Whitelist. Apps needing adding of notification number have to be explicitly specified.</string>
     <string name="pref_apps_default_increase_onupdate_summary_off">Current setting: Blacklist. Notification Count will try to add a number to every notification, wrongly behaving apps have to be excluded explicitly.</string>

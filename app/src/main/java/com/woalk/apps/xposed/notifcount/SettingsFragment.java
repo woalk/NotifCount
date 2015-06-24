@@ -114,7 +114,11 @@ public class SettingsFragment extends PreferenceFragment implements
 
     EditTextPreference numberSizePref = (EditTextPreference) findPreference("number_size");
     numberSizePref.setSummary(getString(R.string.pref_appear_number_size_summary,
-        numberSizePref.getText()));
+            numberSizePref.getText()));
+
+    EditTextPreference numberBadgeAlphaPref = (EditTextPreference) findPreference("number_badge_alpha");
+    numberBadgeAlphaPref.setSummary(getString(R.string.pref_appear_number_badge_alpha_summary,
+            numberBadgeAlphaPref.getText()));
 
     ListPreference numberBadgeShapePref = (ListPreference) findPreference("number_badge_shape");
     numberBadgeShapePref.setSummary(numberBadgeShapePref.getEntry());
@@ -222,6 +226,12 @@ public class SettingsFragment extends PreferenceFragment implements
       EditTextPreference editTextPref = (EditTextPreference) pref;
       editTextPref.setSummary(getString(R.string.pref_appear_number_size_summary,
           editTextPref.getText()));
+    } else if (pref.getKey().equals("number_badge_alpha")) {
+      EditTextPreference editTextPref = (EditTextPreference) pref;
+      if (Integer.valueOf(editTextPref.getText()) > 255)
+        editTextPref.setText("255");
+      editTextPref.setSummary(getString(R.string.pref_appear_number_badge_alpha_summary,
+              editTextPref.getText()));
     }
   }
 

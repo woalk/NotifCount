@@ -145,6 +145,7 @@ public class XposedMod implements IXposedHookLoadPackage,
             final Resources res = context.getResources();
             final float numberSize = mSettingsHelper.getNumberSize();
             final int numberShape = mSettingsHelper.getNumberBadgeShape();
+            final int numberAlpha = mSettingsHelper.getBadgeAlpha();
 
             Paint mNumberPain = (Paint) XposedHelpers
                 .getObjectField(param.thisObject, "mNumberPain");
@@ -191,7 +192,9 @@ public class XposedMod implements IXposedHookLoadPackage,
                       b.setPadding(px2, px2, px2, px2);
                       b.getPaint().setColor(mSettingsHelper.getBadgeColor());
                       Drawable l[] = new Drawable[] { a, b };
-                      return new LayerDrawable(l);
+                      LayerDrawable layer = new LayerDrawable(l);
+                      layer.setAlpha(numberAlpha);
+                      return layer;
                     }
                   });
           }

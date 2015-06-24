@@ -27,6 +27,7 @@ public class SettingsHelper {
   private static final String NOTIFICATION_NUMBER_SIZE = "number_size";
   private static final String NOTIFICATION_NUMBER_BADGE_SHAPE = "number_badge_shape";
   private static final String NOTIFICATION_NUMBER_BADGE_COLOR = "number_badge_color";
+  private static final String NOTIFICATION_NUMBER_BADGE_ALPHA = "number_badge_alpha";
   private static final String NOTIFICATION_NUMBER_COLOR = "number_color";
   private static final String NOTIFICATION_NUMBER_BADGE_BORDER_COLOR = "number_badge_border_color";
   private static final String NOTIFICATION_SYSTEM_INTEGRATION = "system_integration";
@@ -163,6 +164,15 @@ public class SettingsHelper {
       number =mSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
     else if (mXSharedPreferences != null)
       number = mXSharedPreferences.getInt(NOTIFICATION_NUMBER_BADGE_BORDER_COLOR, Color.LTGRAY);
+    return number;
+  }
+
+  public int getBadgeAlpha() {
+    int number = 1;
+    if (mSharedPreferences != null)
+      number = Integer.parseInt(mSharedPreferences.getString(NOTIFICATION_NUMBER_BADGE_ALPHA, "255"));
+    else if (mXSharedPreferences != null)
+      number = Integer.parseInt(mXSharedPreferences.getString(NOTIFICATION_NUMBER_BADGE_ALPHA, "255"));
     return number;
   }
 
