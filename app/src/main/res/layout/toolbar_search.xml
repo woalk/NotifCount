@@ -31,7 +31,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine="true"
-                android:textColor="?android:attr/textColorPrimary"/>
+                android:textColor="?android:attr/textColorPrimary"
+                android:textCursorDrawable="@null"/>
 
             <ImageButton
                 android:id="@+id/search_clear"

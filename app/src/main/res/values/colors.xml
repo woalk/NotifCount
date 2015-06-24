@@ -2,7 +2,7 @@
 <resources>
 
   <color name="logo_color">#009688</color>
-  <color name="logo_color_dark">#003e38</color>
+  <color name="logo_color_dark">#00756a</color>
 
   <drawable name="notification_number_text_color">#ff000000</drawable>
 
