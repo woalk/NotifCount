@@ -1,6 +1,5 @@
 package com.woalk.apps.xposed.notifcount;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,16 +8,19 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 /**
  * Created by woalk on 04/06/15.
  */
-public class SingleAppActivity extends Activity {
+public class SingleAppActivity extends AppCompatActivity {
 
   public static final String INTENT_ACTION = SettingsHelper.PACKAGE_NAME + ".SINGLEAPP";
   public static final String INTENT_EXTRA_PACKAGE_NAME = SettingsHelper.PACKAGE_NAME +
@@ -40,7 +42,13 @@ public class SingleAppActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	setContentView(R.layout.whitelist_item);
+	setContentView(R.layout.activity_replaceable);
+
+	View v = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE))
+					.inflate(R.layout.whitelist_item, (ViewGroup) findViewById(android.R.id.content), false);
+	((ViewGroup) findViewById(android.R.id.widget_frame)).addView(v);
+
+	setSupportActionBar((Toolbar) findViewById(R.id.toolbar1));
 
 	pm = getPackageManager();
 
