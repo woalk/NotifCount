@@ -65,6 +65,8 @@
             android:inputType="number"
             android:numeric="integer"
             android:defaultValue="255" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_system" >
         <CheckBoxPreference
             android:key="system_integration"
             android:title="@string/pref_system_integration_title"
