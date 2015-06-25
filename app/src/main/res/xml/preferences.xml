@@ -59,6 +59,14 @@
             woalk:columns="4"
             android:defaultValue="@color/colors_lightgray" />
         <EditTextPreference
+            android:key="number_badge_border_width"
+            android:title="@string/pref_appear_number_badge_border_width_title"
+            android:summary="@string/pref_appear_number_badge_border_width_summary"
+            android:dialogTitle="@string/pref_appear_number_badge_border_width_title"
+            android:inputType="numberDecimal"
+            android:numeric="decimal"
+            android:defaultValue="1" />
+        <EditTextPreference
             android:key="number_badge_alpha"
             android:title="@string/pref_appear_number_badge_alpha_title"
             android:dialogTitle="@string/pref_appear_number_badge_alpha_summary"

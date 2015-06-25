@@ -26,6 +26,8 @@
     <string name="pref_appear_number_color_summary">The color in which the number will be tinted.</string>
     <string name="pref_appear_number_badge_border_color_title">Number badge border color</string>
     <string name="pref_appear_number_badge_border_color_summary">The color in which the number badge\'s border will be tinted.</string>
+    <string name="pref_appear_number_badge_border_width_title">Number badge border width</string>
+    <string name="pref_appear_number_badge_border_width_summary">Current: %s dp</string>
     <string name="pref_appear_number_size_title">Number size</string>
     <string name="pref_appear_number_size_summary">Current size: %s dp</string>
     <string name="pref_appear_number_badge_shape">Number badge shape</string>
