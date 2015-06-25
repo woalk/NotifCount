@@ -20,7 +20,7 @@
     <string name="pref_apps_increase_onupdate_nonumber">Don\'t show any number</string>
     <string name="pref_apps_increase_onupdate_count">Count updates</string>
     <string name="pref_apps_increase_onupdate_summary">Force specific apps to use a specific method to retrieve the notification number (or to not use a number at all).</string>
-    <string name="pref_appear_number_badge_color_title">Badge color</string>
+    <string name="pref_appear_number_badge_color_title">Number badge color</string>
     <string name="pref_appear_number_badge_color_summary">The color in which the number badge will be tinted.</string>
     <string name="pref_appear_number_color_title">Number text color</string>
     <string name="pref_appear_number_color_summary">The color in which the number will be tinted.</string>

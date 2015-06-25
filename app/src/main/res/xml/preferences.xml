@@ -69,7 +69,7 @@
         <EditTextPreference
             android:key="number_badge_alpha"
             android:title="@string/pref_appear_number_badge_alpha_title"
-            android:dialogTitle="@string/pref_appear_number_badge_alpha_summary"
+            android:dialogTitle="@string/pref_appear_number_badge_alpha_title"
             android:inputType="number"
             android:numeric="integer"
             android:defaultValue="255" />
