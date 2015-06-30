@@ -26,12 +26,11 @@ Also feel free to open an issue on GitHub if you want.
 
 ### Origin of this module
 The original author of this Mod is *bbukowski* (https://github.com/bbukowski).
-This is a fork of https://github.com/bbukowski/NotifCount/ to keep developing, as the original author seems to have discontinued development (last commit mid 2014).
-I created a pull request for the changes up to `v1.1.1-re` for a possible merge into the original repo, if the original developer would like to continue.
+This is a fork of https://github.com/bbukowski/NotifCount/ to keep developing, as the original author discontinued development (last commit mid 2014) due to time problems.
 
 ### Source information
 The original developer did not provide any licensing information.
-I assume that he is ok with forking his work.
+He gave me the personal right to continue using his project's idea and code.
 
 For all my changes (everything except branch master), I apply the GNU General Public License v2.
 You can find a copy in this repo under `LICENSE`.
@@ -43,6 +42,7 @@ Branch `master`:
 (C) 2014 Benjamin Bukowski
          GitHub user github.com/bbukowski
 Content not licensed. General GitHub Terms of Use apply.
+Permission to use this code granted by author.
 
 Branch `woalk/master` and other `woalk/*` branches:
 (C) 2015 Woalk       woalk.com
