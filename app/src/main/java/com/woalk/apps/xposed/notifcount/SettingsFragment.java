@@ -21,7 +21,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NotificationCompat;
-import android.widget.EditText;
 
 import java.util.Random;
 

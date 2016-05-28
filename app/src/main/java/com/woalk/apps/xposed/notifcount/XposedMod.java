@@ -71,6 +71,7 @@ public class XposedMod implements IXposedHookLoadPackage,
   private static final String PKG_SETTINGS = "com.android.settings";
   private static final String CLASS_APPNOTIFICATIONSETTINGS_API21 = PKG_SETTINGS + ".notification.AppNotificationSettings";
   private static final String PKG_HTCPREFERENCE = "com.htc.preference";
+  private static final String CLASS_NOTIFICATION_MANAGER = "android.app.NotificationManager";
 
   private static SettingsHelper mSettingsHelper;
   private static String MODULE_PATH = null;
@@ -129,6 +130,11 @@ public class XposedMod implements IXposedHookLoadPackage,
       if (mSettingsHelper.getShouldDoSystemIntegration()) {
         hookSystemIntegration_api21(lpparam.classLoader);
       }
+    }
+
+    if (mSettingsHelper.getShouldAddAlternatePrivate() &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      hookAlternatePrivate_api21(lpparam.classLoader);
     }
 
     if (!PKG_SYSTEMUI.equals(lpparam.packageName))
@@ -362,6 +368,36 @@ public class XposedMod implements IXposedHookLoadPackage,
             "addPreference", pref);
   }
 
+  @TargetApi(21)
+  private void hookAlternatePrivate_api21(ClassLoader loader) {
+    XposedHelpers.findAndHookMethod(CLASS_NOTIFICATION_MANAGER, loader, "notify", String.class,
+            int.class, Notification.class, new XC_MethodHook() {
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Context context = (Context) XposedHelpers.getObjectField(param.thisObject,
+                        "mContext");
+                Resources res = context.getPackageManager()
+                        .getResourcesForApplication(SettingsHelper.PACKAGE_NAME);
+                Notification notification = (Notification) param.args[2];
+
+                mSettingsHelper.reload();
+                autoApplyNumber(notification, mSettingsHelper.getSetting(context.getPackageName()));
+
+                if (notification.number > 0 && notification.publicVersion == null) {
+                  notification.publicVersion = new Notification.Builder(context)
+                          .setContentTitle(context.getPackageManager().getApplicationLabel(
+                                  context.getApplicationInfo()))
+                          .setContentText(res.getString(R.string.alternate_private_text,
+                                  notification.number))
+                          .setSmallIcon(notification.icon)
+                          .setColor(notification.color)
+                          .setVisibility(Notification.VISIBILITY_PUBLIC)
+                          .build();
+                }
+              }
+            });
+  }
+
   /*
   Method copied from AOSP source.
   See the big comment block above in hookSystemIntegration for the origin of this method.
@@ -433,8 +469,10 @@ public class XposedMod implements IXposedHookLoadPackage,
 
             mSettingsHelper.reload();
 
-            autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
-                mSettingsHelper.getSetting(sbn.getPackageName()));
+            if (!mSettingsHelper.getShouldAddAlternatePrivate()) {
+              autoApplyNumber(sbn.getNotification(), oldSbn.getNotification(),
+                      mSettingsHelper.getSetting(sbn.getPackageName()));
+            }
           }
         });
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -455,8 +493,10 @@ public class XposedMod implements IXposedHookLoadPackage,
                 StatusBarNotification sbn = (StatusBarNotification) param.args[0];
                 mSettingsHelper.reload();
 
-                autoApplyNumber(sbn.getNotification(),
-                        mSettingsHelper.getSetting(sbn.getPackageName()));
+                if (!mSettingsHelper.getShouldAddAlternatePrivate()) {
+                  autoApplyNumber(sbn.getNotification(),
+                          mSettingsHelper.getSetting(sbn.getPackageName()));
+                }
               }
             });
   }
@@ -475,8 +515,10 @@ public class XposedMod implements IXposedHookLoadPackage,
                 StatusBarNotification sbn = (StatusBarNotification) param.args[0];
                 mSettingsHelper.reload();
 
-                autoApplyNumber(sbn.getNotification(),
-                        mSettingsHelper.getSetting(sbn.getPackageName()));
+                if (!mSettingsHelper.getShouldAddAlternatePrivate()) {
+                  autoApplyNumber(sbn.getNotification(),
+                          mSettingsHelper.getSetting(sbn.getPackageName()));
+                }
               }
             });
   }

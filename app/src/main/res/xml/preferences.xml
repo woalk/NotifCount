@@ -15,6 +15,11 @@
             android:summaryOff="@string/pref_apps_default_increase_onupdate_summary_off"
             android:title="@string/pref_apps_default_increase_onupdate_title"
             android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="alternate_private"
+            android:summary="@string/pref_apps_alternate_private_summary"
+            android:title="@string/pref_apps_alternate_private_title"
+            android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_appearance" >
         <EditTextPreference

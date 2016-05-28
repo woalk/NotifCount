@@ -236,6 +236,7 @@ public class AppList {
         vh.radioG = (RadioGroup) v.findViewById(R.id.radioG);
         vh.radio3 = (RadioButton) v.findViewById(R.id.radio3);
         vh.radio4 = (RadioButton) v.findViewById(R.id.radio4);
+        vh.radio6 = (RadioButton) v.findViewById(R.id.radio6);
         v.setTag(vh);
       } else {
         vh = (ViewHolder) v.getTag();
@@ -302,6 +303,8 @@ public class AppList {
           }
         }
       });
+
+      vh.radio6.setEnabled(!mSettingsHelper.getShouldAddAlternatePrivate());
 
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
         vh.radio3.setVisibility(View.GONE);
@@ -405,6 +408,7 @@ public class AppList {
       public RadioGroup radioG;
       public RadioButton radio3;
       public RadioButton radio4;
+      public RadioButton radio6;
       public ItemLoaderTask loaderTask;
     }
 
