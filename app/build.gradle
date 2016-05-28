@@ -1,5 +1,23 @@
 apply plugin: 'com.android.application'
 
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream();
+        exec {
+            commandLine 'git', 'describe', '--tags', '--dirty'
+            standardOutput = stdout;
+        }
+        String ver = stdout.toString().trim();
+        if (ver.startsWith("v") && ver.charAt(1).isDigit()) {
+            ver = ver.substring(1);
+        }
+        return ver;
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -8,6 +26,8 @@ android {
         applicationId "com.woalk.apps.xposed.notifcount"
         minSdkVersion 15
         targetSdkVersion 23
+        versionCode 6
+        versionName getVersionName()
     }
 
     buildTypes {

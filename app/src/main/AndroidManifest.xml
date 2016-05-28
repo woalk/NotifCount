@@ -1,9 +1,6 @@
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.woalk.apps.xposed.notifcount"
-    android:versionCode="6"
-    android:versionName="3.1" >
+    package="com.woalk.apps.xposed.notifcount">
 
     <application
         android:allowBackup="true"
