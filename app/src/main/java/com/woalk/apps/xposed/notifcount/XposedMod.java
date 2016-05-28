@@ -410,18 +410,18 @@ public class XposedMod implements IXposedHookLoadPackage,
           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             StatusBarNotification sbn = (StatusBarNotification) param.args[0];
 
-            Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
-                "mNotificationData");
-            Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
-                "mHeadsUpNotificationView");
 
             final String key = sbn.getKey();
             boolean wasHeadsUp = (boolean) XposedHelpers.callMethod(param.thisObject,
                 "isHeadsUp", key);
             Object oldEntry;
             if (wasHeadsUp) {
+              Object mHeadsUpNotificationView = XposedHelpers.getObjectField(param.thisObject,
+                      "mHeadsUpNotificationView");
               oldEntry = XposedHelpers.callMethod(mHeadsUpNotificationView, "getEntry");
             } else {
+              Object mNotificationData = XposedHelpers.getObjectField(param.thisObject,
+                      "mNotificationData");
               oldEntry = XposedHelpers.callMethod(mNotificationData, "get", key);
             }
             if (oldEntry == null) {
@@ -437,19 +437,48 @@ public class XposedMod implements IXposedHookLoadPackage,
                 mSettingsHelper.getSetting(sbn.getPackageName()));
           }
         });
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      hookAutoDecide_new_api23(loader);
+    } else {
+      hookAutoDecide_new_api21(loader);
+    }
+  }
+
+  @TargetApi(21)
+  private void hookAutoDecide_new_api21(ClassLoader loader) {
     Class<?> clazz2 = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
     XposedHelpers.findAndHookMethod(clazz2, "addNotification", StatusBarNotification.class,
-        RankingMap.class, new XC_MethodHook() {
+            RankingMap.class, new XC_MethodHook() {
 
-          @Override
-          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            StatusBarNotification sbn = (StatusBarNotification) param.args[0];
-            mSettingsHelper.reload();
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                StatusBarNotification sbn = (StatusBarNotification) param.args[0];
+                mSettingsHelper.reload();
 
-            autoApplyNumber(sbn.getNotification(),
-                mSettingsHelper.getSetting(sbn.getPackageName()));
-          }
-        });
+                autoApplyNumber(sbn.getNotification(),
+                        mSettingsHelper.getSetting(sbn.getPackageName()));
+              }
+            });
+  }
+
+  @TargetApi(21)
+  private void hookAutoDecide_new_api23(ClassLoader loader) {
+    Class<?> clazz = XposedHelpers.findClass(CLASS_PHONESTATUSBAR, loader);
+    Class<?> clazz_entry = XposedHelpers.findClass(
+            "com.android.systemui.statusbar.NotificationData.Entry", loader);
+
+    XposedHelpers.findAndHookMethod(clazz, "addNotification", StatusBarNotification.class,
+            RankingMap.class, clazz_entry, new XC_MethodHook() {
+
+              @Override
+              protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                StatusBarNotification sbn = (StatusBarNotification) param.args[0];
+                mSettingsHelper.reload();
+
+                autoApplyNumber(sbn.getNotification(),
+                        mSettingsHelper.getSetting(sbn.getPackageName()));
+              }
+            });
   }
 
   @TargetApi(18)
